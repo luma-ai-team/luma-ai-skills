@@ -4,8 +4,8 @@ Read this before the first Luma call in a conversation. Every workflow in this b
 instead of repeating it. The tools themselves are the authority: when a tool's description or
 answer says something different from this page, follow the tool.
 
-Prices, durations, aspect ratios, resolutions and model names change with the catalog. Never quote
-one from memory or from this page. Read them at run time from `list_models`, `list_templates` and
+Prices, durations, aspect ratios and model names change with the catalog. Never quote one from
+memory or from this page. Read them at run time from `list_models`, `list_templates` and
 `estimate_cost`.
 
 ## The ten tools
@@ -104,7 +104,9 @@ among them.
   `"audio"` for the row priced with sound), `luma_credits` per `per` unit, and `capabilities` for
   that row: `audio` (true only on a row priced with sound), `durations` (on the audio row, the
   durations allowed with audio on), `durations_with_audio` (the same list on the audio row, null on
-  a plain row), `aspect_ratios`, `resolutions`, `frame_rates`.
+  a plain row) and `aspect_ratios` (null for `image-to-video`, `frames` and `extend`, whose modes
+  take no `aspect_ratio`: the clip takes the shape of its input). There is no resolution or frame
+  rate setting on any tool.
 - Pictures from text and edits have a single model: `models` is empty, the row's `model` is null,
   and the call takes no `model` field. Take `aspect_ratios` from that row.
 - Pass only values the chosen model's row lists. Omit `model`, `duration` or `aspect_ratio` to get
@@ -122,8 +124,10 @@ among them.
 - `list_templates` needs `kind` (`"effect"` or `"style"`), and takes `category` (exact, from the
   `categories` list in the answer), `query` (matches only a template's name or key, never what it
   shows, so a subject word such as "dog" often finds nothing) and `limit`. Each template has
-  `key`, `name`, `category`, `credits` (effects: per generation; styles: the fast tier per unit of
-  `per`), `credits_max` (styles: the max tier), `input_count` and a `preview_url` showing a sample.
+  `key`, `name`, `category`, `credits` (effects: per generation; styles: the video restyle price,
+  fast tier, per unit of `per` of the source video), `credits_max` (styles: the video restyle price
+  at the max tier), `input_count` and a `preview_url` showing a sample. A style's `credits` never
+  price a photo in that style: `estimate_cost` does.
   Show the user `preview_url` links before spending; they are free.
 
 ## Quote first, then ask
@@ -137,9 +141,10 @@ Nothing that spends credits runs before the user says yes to a quote.
    `priced_seconds`, `balance`, `enough` and `shortfall`, and charges nothing.
 2. It also refuses, for free, an unavailable model, template or style, a duration the model does
    not offer, a wrong number of effect photos, and an input that is not the user's, the wrong kind,
-   or not finished. Fix the plan there. It does not check `aspect_ratio`, a source video's length
-   or size, content moderation, or the content-policy consent: a clean quote is not a promise the
-   call will run.
+   or not finished, and a video restyle whose source clip is outside the length or size the
+   catalog accepts. Fix the plan there. It does not check `aspect_ratio`, the length or size of any
+   other source, content moderation, or the content-policy consent: a clean quote is not a promise
+   the call will run.
 3. The quote needs every input to exist and be finished. Edit, image, frames, extend and effect
    prices do not depend on which picture or video, so quote a step whose input is not made yet with
    one that exists (the uploaded photo, or a finished item from `list_generations`); when none

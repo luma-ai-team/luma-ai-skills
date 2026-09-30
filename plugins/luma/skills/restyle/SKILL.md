@@ -111,9 +111,10 @@ estimate_cost {"tool": "generate_image", "mode": "edit", "image": {"upload_id": 
 estimate_cost {"tool": "apply_template", "kind": "style", "key": "<key>", "video": {"generation_id": "<id>"}, "tier": "fast"}
 ```
 
-For a video, `priced_seconds` in the answer is the source's length. The quote refuses a video
-whose length Luma does not know, for free; a clip the provider cannot take (too long, too large) is
-refused only once the restyle starts, and those credits come back. Show one short list: each variant and its price, the
+For a video, `priced_seconds` in the answer is the source's length. The quote refuses, for free, a
+video whose length Luma does not know and a clip outside the length or size the catalog accepts
+for a restyle; say which limit it named and pick another clip with the user. A clip the provider
+still cannot take is refused only once the restyle starts, and those credits come back. Show one short list: each variant and its price, the
 total, the number of generations and the balance. Say that a retake, or the max tier later, is a
 new generation with its own price. Wait for the user's yes.
 

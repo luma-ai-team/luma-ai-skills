@@ -43,9 +43,7 @@ Ask only what the brief leaves open:
 `durations_with_audio`, which rows have the audio variant, and `aspect_ratios`. Choose the film's
 `aspect_ratio` to match the shape: a value the `text-to-image` and `image-edit` rows both list (and
 `text-to-video`, for text shots); `estimate_cost` does not check it. Model values are per feature; do not
-reuse one feature's model value in another. Read each row's `resolutions` too: models of different
-resolutions in one film make some shots visibly softer than their neighbours, so keep the shots at
-one resolution where the catalog allows it, or say which shots will be softer.
+reuse one feature's model value in another.
 
 ## 4. Plan the sound before the shots
 
