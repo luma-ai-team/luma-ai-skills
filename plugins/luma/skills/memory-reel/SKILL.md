@@ -29,9 +29,12 @@ Run `ffmpeg -version` and `python3 -c "import PIL"`.
   the chat.
 - **The occasion and the mood**: a birthday, a trip, a wedding; joyful, calm, nostalgic.
 - **The order**: as given, or a story order you propose (arrival, the day, the evening).
-- **The shape**: vertical for phones and social media, or landscape for a TV or a laptop.
-- **Music**: a song file they have the right to use (with a shell), or none here and a song added
-  in their app. These tools do not make a music track.
+- **The shape and where it goes**: vertical for a phone status, story or reel, landscape for a TV
+  or a laptop, and any length limit of the place they will post it.
+- **Music**: a song file they have the right to use (with a shell), or none. If they have none but
+  say a soft sound is fine, tell them you will lay a quiet ambient bed under the reel
+  ([reel edit R5](references/reel-edit.md)); these tools do not make songs. If they want silence,
+  or a song added later in their app, say so and skip it.
 - **Words**: a title for the start (such as a place and a date) and an end line, or none.
 - **Rights**: the photos are theirs or they may use them, and the people in them agreed.
 
@@ -49,6 +52,11 @@ Run `ffmpeg -version` and `python3 -c "import PIL"`.
 Keep a manifest as you go (with a shell, `reel.md` in the project folder): position, what the
 photo shows, portrait or landscape or square, and its `upload_id`. Look at each photo if you can:
 who is in it, faces, how it is framed. If you cannot see them, ask for one line per photo.
+
+Phone photos can carry a rotate flag, so `ffprobe` shows the stored pixels, not the upright
+picture. Read the true shape with
+`python3 -c "from PIL import Image, ImageOps; print(ImageOps.exif_transpose(Image.open('p01.jpg')).size)"`.
+Luma applies the flag itself.
 
 ## 4. Choose one look for the whole reel
 
@@ -88,7 +96,8 @@ A reel feels like one piece when every clip moves the same way. Offer these and 
 - **Length**: use one `image-to-video` duration from `list_models` for every clip (a recap moves
   quickly, so the shortest listed usually fits). The reel is the clips' sum minus the transitions,
   and clips can be trimmed in the edit. Tell the user the length that gives, and adjust the photo
-  count or duration with them.
+  count or duration with them. For a status or a story keep it short: trim each clip in the edit
+  (`norm ... <seconds>`) and check the app's current limit.
 
 ## 6. Plan and quote
 
@@ -104,14 +113,14 @@ A reel feels like one piece when every clip moves the same way. Offer these and 
 
 ## 7. Make the clips
 
-Keys: `<reel>-<run>-p<nn>-<what>`, such as `lisbon-reel-0930a-p03-animate`, where `<run>` is a run
-tag chosen once for this reel (see the cheat sheet); a retake is `...-t2`.
+Keys: `<reel>-<run>-p<nn>-<what>`, such as `lisbon-reel-k7f2-p03-animate`, where `<run>` is four
+random characters chosen once for this reel (see the cheat sheet); a retake is `...-t2`.
 
 ```
 generate_video {"mode": "image", "image": {"upload_id": "<photo 3>"}, "prompt": "<what moves>. Slow push-in, gentle and steady.",
-  "model": "<from list_models>", "duration": <the clip duration you chose>, "client_request_id": "lisbon-reel-0930a-p03-animate"}
-apply_template {"kind": "effect", "key": "<key>", "images": [{"upload_id": "<photo 5>"}], "client_request_id": "lisbon-reel-0930a-p05-fx"}
-generate_image {"mode": "style", "image": {"upload_id": "<photo 3>"}, "style": "<key>", "client_request_id": "lisbon-reel-0930a-p03-style"}
+  "model": "<from list_models>", "duration": <the clip duration you chose>, "client_request_id": "lisbon-reel-k7f2-p03-animate"}
+apply_template {"kind": "effect", "key": "<key>", "images": [{"upload_id": "<photo 5>"}], "client_request_id": "lisbon-reel-k7f2-p05-fx"}
+generate_image {"mode": "style", "image": {"upload_id": "<photo 3>"}, "style": "<key>", "client_request_id": "lisbon-reel-k7f2-p03-style"}
 ```
 
 - Stills first (illustrated or reshaped): wait for each `media_url`, check it, then animate the
@@ -137,12 +146,13 @@ Follow [the ffmpeg reference](../short-film/references/ffmpeg.md) and
 [the reel edit steps](references/reel-edit.md) in this order:
 
 1. Check the tools (ffmpeg step 1), then size and frame rate for the reel's shape (R1: ffmpeg
-   step 4 with `O` set to the reel's shape).
-2. Normalise each clip to its planned seconds (ffmpeg step 6), fitting the ones of the other
-   orientation (R2). An effect's own soundtrack goes low or silent.
+   step 4 with `R` set to the reel's shape).
+2. Normalise each clip to its planned seconds (ffmpeg step 6). Look at each under the plain crop
+   first; move the crop or fit the whole picture where the crop cuts a face (R2). An effect's own
+   soundtrack goes low or silent.
 3. The title over the first clip and a silent end card, with the user's words (ffmpeg step 8).
 4. Join with soft crossfades such as `fade` or `dissolve` (ffmpeg step 9a) into `reel-cut.mp4`.
-5. One grade and the music under the whole reel (R4).
+5. One grade and the music, or the quiet ambient bed, under the whole reel (R4, R5).
 6. Check the length, loudness and a contact sheet (ffmpeg step 10), then the phone copy (step 11).
 
 Hand over: the paths of both files, the running time, and the manifest with every

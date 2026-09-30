@@ -58,6 +58,10 @@ Things the table implies that are easy to miss:
   extension asked for audio, the first part of the new file stays silent.
 - **Prompts have a length ceiling.** An over-long prompt is refused with the limit in the message.
   One focused paragraph per prompt is enough.
+- **Sizes differ by mode.** Pictures and clips come out close to the shape asked for, but at
+  slightly different pixel sizes per mode and model: an edit of a picture, or two clips animated
+  from one still by different modes, do not match it exactly. Joining them needs the normalising
+  in [the ffmpeg reference](../short-film/references/ffmpeg.md) (steps 3 and 4).
 
 ## Media is an id, never a link
 
@@ -94,10 +98,15 @@ among them.
 ## Reading the catalog
 
 - `list_models` with `feature` (`text-to-image`, `image-edit`, `text-to-video`, `image-to-video`,
-  `frames` or `extend`; omit it for all) returns `models` (each with `value`, `label`,
-  `is_default`) and priced `rows`. Each row has `model`, `variant` (such as `"audio"`),
-  `luma_credits` per `per` unit, and `capabilities`: `audio`, `durations`, `durations_with_audio`,
-  `aspect_ratios`, `resolutions`, `frame_rates`.
+  `frames` or `extend`; omit it for all) returns `features`, a list with one entry per feature,
+  each with `models` (each with `value`, `label`, `is_default`) and priced `rows`.
+- Each row is one priced way to call the feature: `model`, `variant` (null for the plain row,
+  `"audio"` for the row priced with sound), `luma_credits` per `per` unit, and `capabilities` for
+  that row: `audio` (true only on a row priced with sound), `durations` (on the audio row, the
+  durations allowed with audio on), `durations_with_audio` (the same list on the audio row, null on
+  a plain row), `aspect_ratios`, `resolutions`, `frame_rates`.
+- Pictures from text and edits have a single model: `models` is empty, the row's `model` is null,
+  and the call takes no `model` field. Take `aspect_ratios` from that row.
 - Pass only values the chosen model's row lists. Omit `model`, `duration` or `aspect_ratio` to get
   the feature's default.
 - **Model values belong to one feature.** Each feature lists its own models, and frames, for one,
@@ -105,12 +114,14 @@ among them.
   another.
 - **Audio may need a named model.** Passing the model of a row with the audio variant always
   works: find a row for that feature with `variant: "audio"` and `capabilities.audio: true`, and
-  pass that row's `model` together with `audio: true`. Leaving `model` out works only when the
-  default model has an audio row, and is otherwise refused with the model to pass ("The default
-  model ... has no audio option. Pass model ..."); pass the model it names. With audio on, the
-  allowed durations are `durations_with_audio`, which can differ from `durations`.
+  pass that row's `model` together with `audio: true` and a duration from that row. Leaving
+  `model` out works only when the default model has an audio row, and is otherwise refused with the
+  model to pass ("The default model ... has no audio option. Pass model ..."); pass the model it
+  names. The plain rows are silent: a clip from text, frames or extend made without `audio: true`
+  has no sound, and the audio row's durations can differ from the plain row's.
 - `list_templates` needs `kind` (`"effect"` or `"style"`), and takes `category` (exact, from the
-  `categories` list in the answer), `query` (matches name or key) and `limit`. Each template has
+  `categories` list in the answer), `query` (matches only a template's name or key, never what it
+  shows, so a subject word such as "dog" often finds nothing) and `limit`. Each template has
   `key`, `name`, `category`, `credits` (effects: per generation; styles: the fast tier per unit of
   `per`), `credits_max` (styles: the max tier), `input_count` and a `preview_url` showing a sample.
   Show the user `preview_url` links before spending; they are free.
@@ -119,7 +130,9 @@ among them.
 
 Nothing that spends credits runs before the user says yes to a quote.
 
-1. Call `estimate_cost` with `tool` and exactly the arguments the generate call will take
+1. Call `estimate_cost` with one flat object: `tool`, plus the generate call's own fields at the
+   top level, such as `{"tool": "generate_video", "mode": "image", "image": {"generation_id":
+   "..."}, "model": "<model from list_models>", "duration": <a listed duration>}`
    (`client_request_id` may be included; it is ignored). It answers `credits`, `rate`, `per`,
    `priced_seconds`, `balance`, `enough` and `shortfall`, and charges nothing.
 2. It also refuses, for free, an unavailable model, template or style, a duration the model does
@@ -144,12 +157,17 @@ Use only numbers `estimate_cost` or the catalog returned in this conversation. `
 you the balance and whether `consent_required` is true; when it is, send the user to the consent
 link before planning any spend.
 
+Every generation answer carries `credits_charged` and `balance_after`. Jobs started together can
+answer with the same `balance_after`, and another session on the account moves the balance too, so
+add up `credits_charged` to report what this run spent; never subtract balances.
+
 ## Idempotency: `client_request_id`
 
 - Required on `generate_image`, `generate_video` and `apply_template`: a key you choose, 8 to 100
   characters. A readable shape helps resumes: project, a run tag, shot, take, such as
-  `lighthouse-0930a-s03-t1`. Choose the run tag once per run (the date plus a letter, or four
-  random characters): a key used in any earlier run hands back that run's generation.
+  `lighthouse-k7f2-s03-t1`. The run tag is four random characters you choose once per run (`k7f2`
+  is only an example; never a date or a word someone else would also pick): a key used in any
+  earlier run hands back that run's generation.
 - **A fresh key for every new job**, including a retake of the same prompt (`...-t2`).
 - **The same key only to retry the same call** when its answer never arrived, the call timed out,
   or the error says to retry with it. The retry returns the first generation with
@@ -165,16 +183,20 @@ link before planning any spend.
 - `generate_image` usually answers with the finished `media_url` in the same call. If it answers
   with `poll_after_seconds` instead, poll as below.
 - `generate_video` and `apply_template` answer at once with a `generation_id` and
-  `poll_after_seconds`. A video takes minutes.
+  `poll_after_seconds`. A video takes a few minutes, a long or high-quality one longer.
 - Poll with `get_generation` `generation_id` and `wait_seconds` (up to 25): the call waits on the
   server and returns early when the result is ready. While `poll_after_seconds` is set, the result is
   not final; call again after that many seconds. When it is null, show the `media_url` or the error.
+- **`completed` is not the end.** A finished video first reads `status: "completed"` with
+  `media_state: "transferring"` and no `media_url`, while its file is being saved, and
+  `poll_after_seconds` is still set. Keep polling until the `media_url` arrives.
 - Start the independent jobs of a step first, then poll them, rather than one at a time. Start
   them in batches of about five: every generation call spends a per-minute budget, and a burst is
   refused with "Too many requests".
 - Do not narrate each poll to the user. Say what is running and roughly that videos take minutes.
 - `media_url` and `thumbnail_url` are signed links valid for one hour. Show or download them
-  promptly; for a fresh link later, call `get_generation` again.
+  promptly; for a fresh link later, call `get_generation` again. `thumbnail_url` is often null for a
+  video: do not promise a thumbnail. With a shell, take a frame with ffmpeg if a still is needed.
 - Lost track of an id (a new conversation, a dropped connection)? `list_generations` (`kind`,
   `limit`) lists the newest first with their status and links.
 - Some clients show a player under the tool result. Still give the link in text.
@@ -234,7 +256,8 @@ Claude Code, or Claude Desktop with a shell. Check once with `ffmpeg -version`.
 
 - **With ffmpeg**: download each `media_url` as soon as it is ready (`curl -sSL -o <file>
   "<media_url>"`, quoting the link), keep the files and a short manifest of ids in one project
-  folder, and assemble locally.
+  folder, and assemble locally. Links have no file extension: save stills as `.jpg` (they are
+  JPEG) and clips as `.mp4`.
 - **Without it** (claude.ai, the phone app): say so before starting, and finish with an ordered list:
   position, what the clip is, its `generation_id`, its `media_url` (valid one hour), where to trim,
   the transition, and the sound to put under it. Never skip the assembly step silently.

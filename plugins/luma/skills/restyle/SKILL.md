@@ -38,7 +38,9 @@ first.
   Luma videos.
 - **The looks** they want to compare, in their words ("anime", "oil painting", "1950s noir"), or
   "show me some".
-- **How many variants**: default three.
+- **How many variants**: default three for a photo. A video look is priced per second of the clip,
+  once per look, many times the price of a picture: for a video, ask for a spending limit and plan
+  to try the looks on a still first (step 4).
 - **For a video, the tier**: `"fast"` (default) for comparing, `"max"` for the final.
 - **Rights**: the photo is theirs or they may use it, and anyone in it agreed.
 
@@ -50,30 +52,44 @@ first.
   `{"action": "confirm", "upload_id": "<id>"}`.
 - **A Luma picture**: `list_generations` `{"kind": "image"}` and its `generation_id`.
 - **A Luma video**: `list_generations` `{"kind": "video", "limit": 10}`. Show each with its prompt,
-  `duration_seconds` and link; the user picks one. It must be `completed` with a `media_url`.
+  `duration_seconds` and link; the user picks one. It must be `completed` with a `media_url`; skip
+  failed and pending rows. If the clip the user means is not in the ten, list more (`limit` up to
+  50) or ask for a word from its prompt.
 
 ## 3. Find the looks
 
-1. `list_templates` `{"kind": "style", "limit": 5}` to read the full `categories` list.
-2. Search with `query` (a word of the look: "anime", "noir", "clay", "paint"; try both spellings of
-   words like "watercolour") or `category` (exact, from the list).
+1. `list_templates` `{"kind": "style", "limit": 50}` lists every style, each with a plain name;
+   pick by name. `categories` can be empty for styles.
+2. `query` matches only a style's name or key: "clay" finds a clay style, while "hand-drawn",
+   "cartoon" or "poster" can find nothing. Use it for a word likely in a name, and try both
+   spellings of words like watercolor and watercolour.
 3. Pick three to five that match and show each with its name and `preview_url` (`preview_kind` says
-   whether the sample is a picture or a clip). Previews are free.
+   whether the sample is a picture or a clip). Previews are free. A look is not always safe for the
+   subject: styles built around faces can invent a face on an object (one gave a mug eyes and
+   arms), comic looks can add sound-effect lettering and a panel border, and line-art looks drop
+   colour. Say what each is likely to add, and for a product or an object see the still first.
 4. **For a photo, when no style fits** a look the user named, offer the edit route with the look
    written out: "Redraw this picture as <medium and look: a watercolour painting on textured paper,
    soft washes, visible brush edges>. Keep the same composition, the same people with the same
    faces and poses, and the same <key details>." Describe the medium, palette, era and light.
+   Looks that come with typography (a poster, a magazine cover, a stamp, a postcard, a label) make
+   the model invent lettering, and it comes out garbled or mirrored. Unless the user wants words,
+   end the prompt with "No text, no lettering, no captions and no signs anywhere in the picture."
+   Do not say "hand-lettered", which asks for lettering. If the user wants words, suggest adding
+   them in an editor afterwards.
 5. The user picks the variants.
 
-## 4. For a video: try the looks on a still first (optional, cheaper)
+## 4. For a video: try the looks on a still first
 
-A video restyle is priced per second, once per variant. To compare looks for less, restyle one
-still in each candidate style first, then restyle the video only in the look the user picks:
+A video restyle is priced per second, once per look, and a still costs the price of one picture.
+Unless the user has already fixed exactly one look, restyle one still in each candidate look first
+(quote them, get the yes), then restyle the video only in the one or two looks the user picks:
 
 - If the video was animated from one of their pictures (its `feature` in `list_generations` is
   `image-to-video`), restyle that picture with `generate_image` `mode: "style"`. The listing does
-  not name a clip's input: ask the user which picture it was, or match one in `list_generations`
-  `{"kind": "image"}` by prompt and date. When unsure, use a frame of the video instead.
+  not name a clip's input, and a user can have several near-identical pictures, so do not guess
+  from prompts and dates: ask the user which picture it was, and when they cannot say, use a frame
+  of the video (next bullet).
 - Otherwise, with a shell: download the video, take a frame
   (`ffmpeg -loglevel error -ss 1 -i source.mp4 -frames:v 1 -q:v 2 frame.jpg`), upload it with
   `action: "start"`, and restyle the frame.
@@ -81,7 +97,8 @@ still in each candidate style first, then restyle the video only in the look the
   test and quote the video variants.
 
 Say that a still shows the look, not the motion, and that the video result can differ. Quote the
-stills and the video restyle together so the user sees both.
+stills with the price of one video look beside them, so the user sees both, and ask for a yes on
+the stills alone; the video looks get their own quote once the user has picked.
 
 ## 5. Quote and confirm
 
@@ -102,28 +119,36 @@ new generation with its own price. Wait for the user's yes.
 
 ## 6. Run
 
-Keys: `<subject>-<run>-style-<look>`, such as `dog-photo-0930a-style-anime`, where `<run>` is a run
-tag chosen once for this conversation (see the cheat sheet); a retake is `...-t2`.
+Keys: `<subject>-<run>-style-<look>`, such as `dog-photo-k7f2-style-anime`, where `<run>` is four
+random characters chosen once for this conversation (see the cheat sheet); a retake is `...-t2`.
 
 ```
-generate_image {"mode": "style", "image": {"upload_id": "<id>"}, "style": "<key>", "client_request_id": "dog-photo-0930a-style-anime"}
-generate_image {"mode": "edit", "image": {"upload_id": "<id>"}, "prompt": "Redraw this picture as ...", "client_request_id": "dog-photo-0930a-look-watercolour"}
-apply_template {"kind": "style", "key": "<key>", "video": {"generation_id": "<id>"}, "tier": "fast", "client_request_id": "surf-clip-0930a-style-noir-fast"}
+generate_image {"mode": "style", "image": {"upload_id": "<id>"}, "style": "<key>", "client_request_id": "dog-photo-k7f2-style-anime"}
+generate_image {"mode": "edit", "image": {"upload_id": "<id>"}, "prompt": "Redraw this picture as ...", "client_request_id": "dog-photo-k7f2-look-watercolour"}
+apply_template {"kind": "style", "key": "<key>", "video": {"generation_id": "<id>"}, "tier": "fast", "client_request_id": "surf-clip-k7f2-style-noir-fast"}
 ```
 
 - `generate_image` usually answers with the finished `media_url`; if it answers with
   `poll_after_seconds`, wait with `get_generation`.
 - `apply_template` answers with a `generation_id` at once. Start the variants in batches of about five, then poll each with
   `get_generation` (`wait_seconds` up to 25) until `poll_after_seconds` is null. Do not narrate the
-  polling; say that videos take minutes.
+  polling; say that a video restyle takes a few minutes.
 
 ## 7. Show them side by side
 
 - Show the original first, then each variant with its style name and `media_url`, in the same
   order every time. Links last one hour.
 - Check each against the original: the same composition, people still recognisable, hands and
-  faces intact, nothing added. For a video: its length against the source's, the motion kept, and
-  whether its sound survived (check the file; do not promise either).
+  faces intact, and nothing added: no invented faces, hands, lettering or objects. For a video: its
+  length against the source's, the motion kept, and whether its sound survived (check the file; do
+  not promise either). A clip made from a photo has no audio to keep, and its restyle has none
+  either (ffprobe shows one video stream): tell the user, and offer a soft ambient bed
+  ([reel edit R5](../memory-reel/references/reel-edit.md), laid under with R4 and `GRADE=null`), or
+  their own music with R4. R4 needs an audio track, so first run
+  [ffmpeg steps 4 and 6](../short-film/references/ffmpeg.md) on the clip, which give it a silent
+  one. Say too that the video
+  look can differ from the still: a clay still can show fingerprints and dents where the clay
+  video is smoother, and the background can change colour.
 - **Without a shell**: a list, original first, each with the style name, `generation_id` and
   `media_url`. Say the links expire in an hour and `list_generations` finds them later.
 - **With a shell**: download them and build one comparison the user can open, original first. Add

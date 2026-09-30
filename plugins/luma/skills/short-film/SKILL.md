@@ -43,7 +43,9 @@ Ask only what the brief leaves open:
 `durations_with_audio`, which rows have the audio variant, and `aspect_ratios`. Choose the film's
 `aspect_ratio` to match the shape: a value the `text-to-image` and `image-edit` rows both list (and
 `text-to-video`, for text shots); `estimate_cost` does not check it. Model values are per feature; do not
-reuse one feature's model value in another.
+reuse one feature's model value in another. Read each row's `resolutions` too: models of different
+resolutions in one film make some shots visibly softer than their neighbours, so keep the shots at
+one resolution where the catalog allows it, or say which shots will be softer.
 
 ## 4. Plan the sound before the shots
 
@@ -64,7 +66,9 @@ Image-to-video clips are silent; most shots will be. Decide now where the sound 
 3. **Shot count**: fit the length with the durations the models list. Each crossfade overlaps two
    shots by its length, so the film is the sum of the shots minus the transitions.
 4. **The look line**: one sentence (medium, lens, colour grade, grain, light) that opens every
-   still prompt word for word. This is what makes separate stills match.
+   still prompt word for word. This is what makes separate stills match. For a street, shop or
+   city shot, add "shopfronts plain and unlettered, no signs, logos or writing" unless the user
+   wants signage.
 5. **Character lines**: one fixed description per character (age, hair, clothes, colours), repeated
    in every still that shows them.
 6. **The shot list**, one row per shot, in the format in [the shot list reference](references/shot-list.md):
@@ -105,14 +109,17 @@ Stills are cheap and quick; video is neither. Approve them separately.
 ## 7. Make the stills
 
 - **Anchors first**: one `generate_image` `mode: "text"` per character or place: look line, then
-  character line, then the moment, with the film's `aspect_ratio`.
+  character line, then the moment, with the film's `aspect_ratio`. When one character or object
+  is in every shot and only the place changes, make that one anchor and make every place as an
+  edit of it ("Same <subject>, now <new place>"). Text anchors per place are for places the
+  character is not in.
 - **Every other still is an edit of its anchor**: `mode: "edit"`, `image` the anchor's
   `generation_id`, `aspect_ratio` the same, prompt "Same <character>, same <clothes>, <the new
   moment>. Keep the same film look." Always edit from the anchor, never from a previous edit, so
   drift does not add up.
 - **Frames pairs**: two edits of the same anchor, one for the first frame and one for the last.
-- Keys: `<film>-<run>-k<nn>-<slug>`, such as `lighthouse-0930a-k03-crank`, with one run tag for
-  the whole film (see the cheat sheet); a retake is `...-t2`.
+- Keys: `<film>-<run>-k<nn>-<slug>`, such as `lighthouse-k7f2-k03-crank`, where `<run>` is four
+  random characters chosen once for the whole film (see the cheat sheet); a retake is `...-t2`.
 - `generate_image` usually answers with the `media_url`. Wait for it before using a still as input.
 - **Check them together.** With ffmpeg, download them and build a contact sheet
   ([ffmpeg step 3](references/ffmpeg.md)); look at it yourself first: the same face and clothes,
@@ -137,7 +144,8 @@ generate_video {"mode": "text", "prompt": "<look line>. <establishing shot>. Sou
 
 - Image mode takes no `audio` and no `aspect_ratio`; sending them is refused.
 - Start shots in batches of about five, then poll each with `get_generation` (`wait_seconds` up
-  to 25). If a call is rate-limited, wait the seconds it names and retry with the same key.
+  to 25) until its `media_url` arrives. Each shot takes a few minutes. If a call is rate-limited,
+  wait the seconds it names and retry with the same key.
 - **Extends wait for their source.** When the source shot has its `media_url`, call
   `generate_video` `mode: "extend"` with `video` its `generation_id`, a prompt for what happens
   next, and a model and duration from the extend row. Quote each extend, and any style pass, when
@@ -148,9 +156,11 @@ generate_video {"mode": "text", "prompt": "<look line>. <establishing shot>. Sou
 ## 9. Check every shot
 
 - With ffmpeg: download each clip as soon as its link arrives (links last one hour), probe it and
-  add its first and last frames to a sheet ([ffmpeg steps 2 and 3](references/ffmpeg.md)).
+  add its first and last frames to a sheet ([ffmpeg steps 2 and 3](references/ffmpeg.md)). Step 3
+  also lists any cut hidden inside a clip.
 - Look for a face or costume that drifted, warped hands, the action not happening, text that came
-  out garbled, a camera move that fights the next shot.
+  out garbled or that names a real brand (shop signs, vehicles, packaging), a cut hidden inside
+  the clip, and a camera move that fights the next shot.
 - A retake needs the user's yes: say which shot, why, and its quoted price. A failed shot shows its
   error and `refunded` in `get_generation`; a retry is a new job with a new key.
 
@@ -158,7 +168,7 @@ generate_video {"mode": "text", "prompt": "<look line>. <establishing shot>. Sou
 
 Follow [the ffmpeg reference](references/ffmpeg.md) in order:
 
-1. Pick the output size and frame rate from the clips (step 4).
+1. Pick the output size and frame rate (step 4, with `R` set to the film's `aspect_ratio`).
 2. Normalise each clip to its planned length, and give every silent shot a sound: borrowed or
    bed (steps 5 to 7). Use each extend output in place of its source. Music goes on after step 4
    of this list, with [reel edit R4](../memory-reel/references/reel-edit.md) (then

@@ -43,14 +43,22 @@ what is in it in one line.
 ## 3. Pick the effects
 
 1. `list_templates` `{"kind": "effect", "limit": 5}` to read the full `categories` list.
-2. Search where the subject fits: `category` (exact name from that list) and, when useful, `query`
-   with a word from the brief. Read a page of results.
+2. Search where the subject fits: `category` (exact name from that list) and, when useful, `query`.
+   `query` matches only an effect's name or key, not its subject, so a word like "cat" or "dog"
+   often returns nothing; use it for a word likely in a name, such as dance, wizard or bounce. For
+   an animal, open the pet category and also try `query: "pet"`. Read a page of results.
 3. Keep effects whose `input_count` is 1. An effect that takes two photos needs a second photo;
    offer one only when the user has it.
 4. Choose two or three that match the subject and the feel. An effect built around a full body
    needs a photo that shows one; a close-up face suits a close-up effect.
-5. Show each with its name, one line on why it fits this photo, and its `preview_url`, so the user
-   sees a sample before anything is spent.
+5. Show each with its name, its `credits`, one line on why it fits this photo, and its
+   `preview_url`, so the user sees the price and a sample before anything is spent. With a shell,
+   download the previews and look at them on one contact sheet
+   ([ffmpeg step 3](../short-film/references/ffmpeg.md)) before recommending any.
+
+An effect sets its own shape and framing (some add black bars), so an effect clip can differ from
+the photo's shape; its `preview_url` shows what to expect. Only the plain animation keeps the
+photo's shape.
 
 ## 4. Write the plain animation
 
@@ -68,6 +76,8 @@ The clip keeps the photo's shape and has no sound.
 - `estimate_cost` for the plain animation with exactly its generate arguments.
 - Show one short list: each option and its price, the total, the number of generations and the
   balance. Let the user drop options, then ask for a yes.
+- A clean quote does not promise an effect will run. Start one effect first and confirm it
+  completes before starting the rest.
 
 ## 6. Run
 
@@ -77,7 +87,8 @@ generate_video {"mode": "image", "image": {"upload_id": "<id>"}, "prompt": "<mot
   "duration": <a listed duration>, "client_request_id": "<photo>-<run>-animate-1"}
 ```
 
-`<run>` is a run tag chosen once for this conversation (see the cheat sheet), such as `0930a`.
+`<run>` is four random characters chosen once for this conversation (see the cheat sheet), such
+as `k7f2`. A retake of an option gets a new key, `...-t2`.
 
 Start them in batches of about five, then poll each with `get_generation` (`wait_seconds` up to 25) until
 `poll_after_seconds` is null. Do not narrate the polling.
@@ -90,8 +101,15 @@ Start them in batches of about five, then poll each with `get_generation` (`wait
   effect, the plain animation again with different motion, an extend of a clip (new seconds; any
   generated sound covers only those seconds), or a restyle (the `restyle` workflow).
 - **With a shell**: offer to download the clips into one folder. To join the favourites into a
-  single preview, name them `s01.mp4`, `s02.mp4` in order, set `O` to their shape, and run
-  [ffmpeg steps 4, 6 and 9b](../short-film/references/ffmpeg.md) (hard cuts).
+  single preview, use a new folder holding only them, as `s01.mp4`, `s02.mp4` in the order
+  offered, and follow [the ffmpeg reference](../short-film/references/ffmpeg.md): step 4 with `R`
+  set to the plain animation's width and height (from `ffprobe` on it), or without one the photo's
+  upright size (step 2); step 6 as `norm sNN.mp4 cNN.mp4 <the clip's own
+  seconds, from ffprobe>` for each clip, with no other arguments; step 9b with only
+  `c01.mp4 c02.mp4 ...` in `cuts.txt` (no titles, end card or sound bed).
+- The effect clips may carry sound and the plain animation has none, so a joined preview goes
+  silent during the animation. Say so, and offer a sound bed (ffmpeg step 5) or to keep the clips
+  as separate files.
 - **Without a shell**: give each `generation_id` with its link, and say that `list_generations`
   finds them later with fresh links.
 
@@ -104,6 +122,10 @@ Start them in batches of about five, then poll each with `get_generation` (`wait
   reword to get it through.
 - **An effect or animation failed**: show `error.message` and whether it was `refunded`; a retry is
   a new job, quoted, with a new key.
+- **An effect that fails on its first poll with "The generator failed on this one"** will most
+  likely fail again, whatever `retryable` says. Do not retry the same effect; offer a different
+  one, once. If two different effects fail this way in a row, stop, tell the user which worked and
+  which did not, and deliver what you have.
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key, and
   start fewer jobs at once.
 - **Not enough credits**: stop, show the account link from the refusal, offer fewer variants.

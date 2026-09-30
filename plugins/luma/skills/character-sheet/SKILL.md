@@ -17,8 +17,12 @@ the details hold. Every picture's `generation_id` goes into a sheet that the `sh
 - **One anchor.** The reference picture is the character's identity. Every other picture is a
   `generate_image` `mode: "edit"` of the anchor, never an edit of an edit (one exception: an
   approved outfit picture, below), so small drifts do not add up. The same rule runs the film's stills (step 7 of the `short-film` workflow).
-- **One character line**: age, build, face, hair, clothes, colours and one distinctive detail (a
-  scar, round glasses, a red scarf). Repeat it word for word in every prompt.
+- **One character line**: species or age, build, face, hair or fur, clothes, colours and one
+  distinctive detail. Choose something worn or carried (round glasses, a red scarf) over a small
+  facial marking (a scar, a patch, a freckle), which the model redraws in a different place in
+  every view. Describe how the character looks, not what they do: a job word ("courier", "chef",
+  "pilot") brings its props (a bicycle, a hat) into every picture, so put the job into the scene
+  rows instead. Repeat the line word for word in every prompt.
 - **One look line**, when the set is for a film or a series: medium, lens, colour grade, light.
   It opens every prompt, word for word.
 - **One change per edit**: the angle, or the outfit, or the place. For a scene in a new outfit,
@@ -71,6 +75,10 @@ total and the balance, and wait for a yes.
   `upload_id` instead of a `generation_id`.
 - Show the candidates, get the user's pick, and write down its `generation_id`. From now on that id
   is the character.
+- Before you lock it, check the pick against the character line: every item in the line is visible
+  (the distinctive detail, the colours, the clothes), there are no props the line did not ask for,
+  and the view is what you asked for (a "front view" has the nose and both eyes centred). A
+  candidate that misses one is a retake of the anchor, not something the edits will fix.
 
 ## 4. Plan the set and quote (gate 2)
 
@@ -79,29 +87,33 @@ after the look line:
 
 | Kind | Prompt |
 |---|---|
-| Angle | "Same <character line>. The same person seen <from three-quarter left / in profile / from behind>, the same pose, plain background and light." |
+| Angle | "Same <character line>. The same person seen <in three-quarter view, turned about 45 degrees to the viewer's right or left / in full side profile, facing the viewer's left or right / from directly behind>, the same pose, plain background and light." |
 | Close-up | "Same <character line>. Close-up of the face, <neutral / laughing / worried>, the same light." |
-| Outfit | "Same person, same face and hair, now wearing <outfit and colours>. The same pose, plain background." |
+| Outfit | "Same person, same face and hair or fur, now wearing <outfit and colours>, and nothing else new. <If the outfit is only accessories, say what is under them: 'no other clothing, bare fur'.> The same pose, plain background." |
 | Scene | "Same <character line>, <doing what> in <place, time of day, light>. Keep the same face, hair and clothes." |
 
 - Scenes are made in the shape of the workflow that will animate them (a scene still is the first
   frame of its clip).
-- Views far from the anchor, such as from behind, drift the most; check them closely.
+- If the user asks for a front view, check the anchor first. If it is not square-on, make "front"
+  its own row; do not list the anchor as the front.
+- Drift shows in what is visible: small facial markings and the size and shape of accessories
+  change between views, so check those in every picture that shows them. A view from behind hides
+  the face and is usually safe.
 - `estimate_cost` for one edit with the anchor's `generation_id` as `image` and the sheet's
   `aspect_ratio`, times the rows. Show the count, the total and the balance, say that a retake costs
   one more picture, and wait for a yes.
 
 ## 5. Make the set
 
-Keys: `<name>-sheet-<run>-<nn>-<label>`, such as `mira-sheet-0930a-03-profile`, where `<run>` is a
-run tag chosen once for this sheet (see the cheat sheet); the anchor candidates
-`mira-sheet-0930a-anchor-1`, `-2`; a retake is `...-t2`.
+Keys: `<name>-sheet-<run>-<nn>-<label>`, such as `mira-sheet-k7f2-03-profile`, where `<run>` is
+four random characters you choose once for this sheet, such as `k7f2` (see the cheat sheet); the
+anchor candidates `mira-sheet-k7f2-anchor-1`, `-2`; a retake is `...-t2`.
 
 ```
 generate_image {"mode": "text", "prompt": "<look line>. <character line>. Full body, front view, ...",
-  "aspect_ratio": "<from list_models>", "client_request_id": "mira-sheet-0930a-anchor-1"}
+  "aspect_ratio": "<from list_models>", "client_request_id": "mira-sheet-k7f2-anchor-1"}
 generate_image {"mode": "edit", "image": {"generation_id": "<anchor>"}, "prompt": "<look line>. Same <character line>. The same person seen in profile, ...",
-  "aspect_ratio": "<the same value>", "client_request_id": "mira-sheet-0930a-03-profile"}
+  "aspect_ratio": "<the same value>", "client_request_id": "mira-sheet-k7f2-03-profile"}
 ```
 
 - `generate_image` usually answers with the `media_url`; if it answers with `poll_after_seconds`,
@@ -131,8 +143,8 @@ Shape: aspect_ratio <value used>
 |---|---|---|---|---|
 | anchor | anchor | none | <id> | the identity; edit from this (an upload_id if it is the photo itself) |
 | 03-profile | angle | anchor | <id> | |
-| 05-raincoat | outfit | anchor | <id> | anchor for rainy scenes |
-| 06-harbour-dawn | scene | 05-raincoat | <id> | vertical |
+| 05-winter | outfit | anchor | <id> | anchor for winter scenes |
+| 06-harbour-dawn | scene | 05-winter | <id> | vertical |
 ```
 
 How the other workflows use it:

@@ -36,7 +36,11 @@ everything, state your assumptions and go straight to the quote.
 - **What**: a picture, a clip, or both, and the idea in a sentence.
 - **Starting point**: nothing, a photo (see "Getting the user's photo into Luma" in the cheat
   sheet), or one of their Luma pictures or videos.
-- **Shape**: landscape, vertical or square.
+- **Shape**: landscape, vertical or square. When the brief says where it goes, take the shape from
+  that and say it in the plan instead of asking: a blog or website header or a video thumbnail is
+  landscape (a wider value, or a squarer one for a banner, when the row offers both), a story or a
+  Reel is vertical, a feed post or a profile picture is square. Take the exact value from the
+  model's row.
 - **Length and sound** for a clip.
 - **Look**: style, mood, lighting, any reference.
 - **How many** variations, and whether quality or cost matters more.
@@ -59,6 +63,8 @@ Two rules of thumb:
 
 - **For control, go through a still.** Make the picture first (text or edit), let the user approve
   it, then animate it with image mode. A clip straight from text is quicker but harder to steer.
+  Offer the still route in one line only when a specific look must hold (a character, a product,
+  a logo). For scenery, animals and mood pieces, go straight to text.
 - **Generated sound comes from text, frames and extend** with `audio: true` and a model whose
   `list_models` row has the audio variant; some effect templates also bring their own soundtrack.
   Image-to-video is always silent. For sound on an animated photo, add it in the edit, or make a
@@ -71,14 +77,19 @@ Two rules of thumb:
 2. For a model-backed call, `list_models` with that feature. Use the default model unless the user
    asked for the best quality (quote the other listed models too), needs sound (an audio row), or
    needs a duration or shape that only another model lists. Take `duration`, and `aspect_ratio`
-   where the mode takes it, from that model's row; never guess them.
+   where the mode takes it, from that model's row; never guess them. Pictures from text have one
+   model and no `model` field: take `aspect_ratios` from its row.
 3. For a style or an effect, `list_templates` with the kind, and `category` or `query` from the
    brief. Show the user three to five matches with their `preview_url` and let them pick.
 4. Write the prompt with [the prompt patterns](references/prompting.md).
 
 ## Plan and quote
 
-1. Say the plan in one line: how many pictures and how many clips, and in which modes.
+1. Say the plan in one line: how many pictures and how many clips, in which modes, and for each
+   clip whether it has sound. A clip from text, frames or extend made without `audio: true` is
+   silent, as image clips always are. When the brief does not mention sound, quote the silent clip
+   and add what sound would cost (a second `estimate_cost` with `audio: true` and the model of an
+   audio row), so the user can choose.
 2. Run `estimate_cost` once per distinct call shape with exactly the arguments you will send.
    Multiply by the count, add up, and show the total, the balance and whether it is enough. For a
    still you will animate, quote the still, make it, then quote the animation with its
@@ -89,14 +100,15 @@ Two rules of thumb:
 ## Run
 
 Send each generation with a fresh `client_request_id` built from the idea, a run tag chosen once
-for this conversation (see the cheat sheet) and a number. Examples (values in angle brackets come
-from the catalog or from earlier answers):
+for this conversation and a number. `k7f2` below stands for four random characters you choose once
+for this conversation (see the cheat sheet). Examples (values in angle brackets come from the
+catalog or from earlier answers):
 
 ```
-generate_image {"mode": "text", "prompt": "...", "aspect_ratio": "<from list_models>", "client_request_id": "fox-snow-0930a-still-1"}
-generate_video {"mode": "image", "image": {"generation_id": "<the approved still>"}, "prompt": "...", "client_request_id": "fox-snow-0930a-clip-1"}
+generate_image {"mode": "text", "prompt": "...", "aspect_ratio": "<from list_models>", "client_request_id": "fox-snow-k7f2-still-1"}
+generate_video {"mode": "image", "image": {"generation_id": "<the approved still>"}, "prompt": "...", "client_request_id": "fox-snow-k7f2-clip-1"}
 generate_video {"mode": "text", "prompt": "... Sound: ...", "model": "<a model with an audio row>",
-  "duration": <one of its durations_with_audio>, "audio": true, "client_request_id": "fox-snow-0930a-clip-2"}
+  "duration": <one of its durations_with_audio>, "audio": true, "client_request_id": "fox-snow-k7f2-clip-2"}
 ```
 
 Start the jobs of the step (in batches of about five), then poll them. A picture used as the input of the next call must
@@ -118,7 +130,10 @@ have its `media_url` first; if `generate_image` answered with `poll_after_second
 - **Without a shell**: list what was made, in order, with each `media_url` and `generation_id`,
   and tell the user the links expire in an hour and that `list_generations` finds everything later.
 - **With a shell**: offer to download the files into a project folder (`curl -sSL -o <name>
-  "<media_url>"`), named by what they are.
+  "<media_url>"`, a still as `.jpg`), named by what they are. For a clip that will play on a web
+  page, offer the muted web copy in [ffmpeg step 11](../short-film/references/ffmpeg.md). For a
+  picture meant as a full-width header, tell the user its pixel size (read it from the file) so
+  they can judge whether it is wide enough.
 - If the user wants several clips joined into one file, that is the `short-film` workflow's finish;
   its [ffmpeg reference](../short-film/references/ffmpeg.md) has the commands.
 

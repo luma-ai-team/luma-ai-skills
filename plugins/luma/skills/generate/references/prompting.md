@@ -21,8 +21,14 @@ grain."
 
 - Put the look first and keep it word for word across every picture of a set; that sentence is
   what makes separate pictures match.
+- A picture that will carry a title (a header, a banner, a thumbnail): name a side and a plain
+  surface for the empty space, such as "the left third of the frame is a plain cream wall with
+  nothing on it". "Empty space at the top" is ignored when the scene fills the frame. Look at the
+  result to check the space is really clear.
 - Text inside a picture (signs, labels) often comes out wrong. Ask for it only when needed, and
-  check it.
+  check it. For a street, shop or city scene, add "shopfronts plain and unlettered, no signs,
+  logos or writing" unless the user wants signage: otherwise the model invents lettering, and
+  sometimes a real brand's.
 
 ## Change a picture (`generate_image` edit)
 

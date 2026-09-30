@@ -58,7 +58,9 @@ Luma").
   `text-to-image` row when that one lists none; `estimate_cost` does not check shapes, so an
   unlisted value can fail only after the call starts, as a provider refusal that returns the credits.
 - **Route A's still is the first frame**, so make it the hook itself: the moment of most tension or
-  surprise, not the calm before it.
+  surprise, not the calm before it. Say where the subject sits, such as "the loaf centred in the
+  frame, its top at the middle of the picture, empty space above". Then look at the still with the
+  bottom fifth and the right sixth covered, the parts a feed hides: the hook must still read.
 - Frames model values differ from text-to-video ones; read the `frames` row for route C and D.
 
 ## 4. Write the hook
@@ -81,11 +83,12 @@ next>. <Camera: fast push-in, whip pan, handheld close-up>. <The payoff, before 
 - With sound on (route B or C), end the prompt with a sound line: "Sound: <three or four concrete
   sounds>". More patterns: [the prompt patterns](../generate/references/prompting.md).
 
-## 5. The loop (an option: unverified, check in QA)
+## 5. The loop (an experiment)
 
-> Unverified, check in QA: nobody has yet confirmed that `frames` mode with the same picture as
-> `start_image` and `end_image` returns a clip that moves and ends where it began. Offer it as an
-> experiment with its own line in the quote, never as a promise, and keep the fallback ready.
+> Tried once in testing: a still used as both frames of a `frames` clip, with a camera orbit and
+> rising steam, gave a clip that moved, ended on its first frame and wrapped with no visible jump.
+> One sample, so keep it an experiment: quote it on its own line, check the seam every time, and
+> keep the fallback ready. It costs more than an ordinary clip of the same length.
 
 With a shell, the mirror loop in the fallback below is free and has no seam by construction, so
 offer it beside the experiment and let the user choose.
@@ -96,28 +99,17 @@ offer it beside the experiment and let the user choose.
   `frames` row.
 - **No generated sound on a loop**: the sound would jump where the clip restarts. Sound goes on in
   the app.
-- **Check the seam.** With a shell, put the last frame beside the first and make a copy that plays
-  three times in a row, then look at both:
-
-```sh
-ffmpeg -loglevel error -y -i hook-loop.mp4 -frames:v 1 seam-first.png
-ffmpeg -loglevel error -y -sseof -0.1 -i hook-loop.mp4 -update 1 seam-last.png
-ffmpeg -loglevel error -y -i seam-last.png -i seam-first.png -filter_complex "[0:v][1:v]hstack=inputs=2,scale=-2:480" seam.jpg
-ffmpeg -loglevel error -y -stream_loop 2 -i hook-loop.mp4 -c copy hook-loop-x3.mp4
-```
-
-  Without a shell, ask the user to watch it on repeat.
+- **Check the seam.** With a shell, follow [hook edit H2](references/hook-edit.md): the last frame
+  beside the first, a number for how alike they are against two neighbouring frames, and a copy
+  that plays three times. Without a shell, ask the user to watch it on repeat.
+- **A loop is its own file.** Never join it to other clips; the join would put a cut in it.
 - **Fallback when the clip barely moves, the seam jumps, or the call is refused** (a provider
   refusal returns the credits):
-  1. **With a shell, a mirror loop, free**: the best route A clip forward, then backward. It suits
-     motion that reads well in reverse (hair, water, smoke, a camera push); not walking, pouring or
-     speech.
-
-```sh
-ffmpeg -loglevel error -y -i hook-v1.mp4 -filter_complex "[0:v]split[fw][bw0];[bw0]reverse[bw];[fw][bw]concat=n=2:v=1:a=0,format=yuv420p[v]" \
-  -map "[v]" -an -c:v libx264 -preset medium -crf 18 -movflags +faststart hook-v1-loop.mp4
-```
-
+  1. **With a shell, a mirror loop, free**: the best route A clip forward, then backward
+     ([hook edit H3](references/hook-edit.md)). It suits a camera push or drift and slow ambient
+     motion. Anything with a visible cause and effect reads as a rewind (steam sinking back, a pour,
+     a step, speech), so prefer the variant whose motion is camera-led, and watch the backward half
+     before offering it.
   2. **No loop**: post the best variant; the app replays it with a visible cut.
 
 ## 6. Plan and quote
@@ -125,7 +117,9 @@ ffmpeg -loglevel error -y -i hook-v1.mp4 -filter_complex "[0:v]split[fw][bw0];[b
 1. Say the plan in one line: how many stills, how many clips, and the loop attempt if any.
 2. **Stills first** (routes A, C, D): one quote per still mode used, with the portrait
    `aspect_ratio`: a text call, and an edit with the uploaded photo (or the first still, once made)
-   as `image`. Multiply by the stills, show it and ask for a yes.
+   as `image`. On route A a variant with a different first second is its own still: two clips from
+   one still differ only after frame one, so quote a still for every variant. Multiply by the
+   stills, show it and ask for a yes.
 3. **Then the clips**, once the stills are approved: `estimate_cost` once per distinct call shape
    with a real still's `generation_id` as input (image mode, frames with and without audio, the
    loop). Route B has only this step.
@@ -134,17 +128,17 @@ ffmpeg -loglevel error -y -i hook-v1.mp4 -filter_complex "[0:v]split[fw][bw0];[b
 
 ## 7. Make it
 
-Keys: `<hook>-<run>-<what>-v<n>`, such as `coffee-hook-0930a-still-v1`, where `<run>` is a run tag
-chosen once for this conversation (see the cheat sheet); a retake is `...-t2`.
+Keys: `<hook>-<run>-<what>-v<n>`, such as `coffee-hook-k7f2-still-v1`, where `<run>` is four random
+characters chosen once for this conversation (see the cheat sheet); a retake is `...-t2`.
 
 ```
-generate_image {"mode": "text", "prompt": "...", "aspect_ratio": "<portrait value from list_models>", "client_request_id": "coffee-hook-0930a-still-v1"}
+generate_image {"mode": "text", "prompt": "...", "aspect_ratio": "<portrait value from list_models>", "client_request_id": "coffee-hook-k7f2-still-v1"}
 generate_video {"mode": "image", "image": {"generation_id": "<still v1>"}, "prompt": "Opens mid-action: ...",
-  "model": "<image-to-video model>", "duration": <a listed duration>, "client_request_id": "coffee-hook-0930a-clip-v1"}
+  "model": "<image-to-video model>", "duration": <a listed duration>, "client_request_id": "coffee-hook-k7f2-clip-v1"}
 generate_video {"mode": "text", "prompt": "... Sound: ...", "aspect_ratio": "<portrait value>", "model": "<a model with an audio row>",
-  "duration": <from durations_with_audio>, "audio": true, "client_request_id": "coffee-hook-0930a-text-v2"}
+  "duration": <from durations_with_audio>, "audio": true, "client_request_id": "coffee-hook-k7f2-text-v2"}
 generate_video {"mode": "frames", "start_image": {"generation_id": "<still v1>"}, "end_image": {"generation_id": "<still v1>"},
-  "prompt": "<motion that leaves and returns>", "model": "<frames model>", "duration": <a listed duration>, "client_request_id": "coffee-hook-0930a-loop-v1"}
+  "prompt": "<motion that leaves and returns>", "model": "<frames model>", "duration": <a listed duration>, "client_request_id": "coffee-hook-k7f2-loop-v1"}
 ```
 
 - `generate_image` usually answers with the `media_url`; a still used as input must have one.
@@ -157,11 +151,10 @@ generate_video {"mode": "frames", "start_image": {"generation_id": "<still v1>"}
   visible, sharp and big; nothing important under the edges the app covers. Check the clip is
   vertical (with a shell, `ffprobe` shows width smaller than height).
 - **With a shell**: download each as `<hook>-v<n>.mp4` (links last one hour). Words on screen go on
-  as a PNG overlay with [the ffmpeg reference](../short-film/references/ffmpeg.md): copy the clip
-  to `s01.mp4`, run steps 4 (with `O=vertical`) and 6 (`norm s01.mp4 c01.mp4 <its seconds>`);
-  they set `W` and `H` and give a silent clip an audio track. Then step 8's opening title (its
-  script fits the width, so it works vertically; for a hook, fade it in at 0.3 s and out one
-  second before the end, not at step 8's timings), then step 11 on `c01t.mp4`.
+  as a PNG overlay: [hook edit H1](references/hook-edit.md) sizes the clip, keeps its exact length
+  (a loop keeps its last frame), fades the words in fast and out before the end, checks a middle
+  frame for words over the hook, and makes a copy for posting with no audio track for the app to
+  fill. Clips from different routes come out at different sizes; finish each variant on its own.
 - **Without a shell**: list the variants, each with what its opening does, `media_url` and
   `generation_id`, which one to post first, and the words and sound to add in the app. Say the
   links expire in an hour and `list_generations` finds them later.
