@@ -1,0 +1,12 @@
+{
+  "name": "luma",
+  "description": "Make pictures, clips and short films with your Luma AI account from Claude Code. Connects the Luma MCP over OAuth and adds eight workflows that quote the cost before they spend credits.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Luma AI Ltd",
+    "url": "https://luma.ai"
+  },
+  "homepage": "https://luma.ai/mcp",
+  "keywords": ["luma", "mcp", "video", "image", "generation", "creator"],
+  "license": "MIT"
+}

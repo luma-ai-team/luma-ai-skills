@@ -1,0 +1,21 @@
+{
+  "name": "luma-ai",
+  "owner": {
+    "name": "Luma AI Ltd",
+    "url": "https://luma.ai"
+  },
+  "metadata": {
+    "description": "Luma AI creator workflows for Claude Code: the Luma MCP connection plus eight skills that turn a brief into a finished picture, clip or short film",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "luma",
+      "source": "./plugins/luma",
+      "description": "Connects the Luma MCP and adds eight workflows: a base generator, short film, photo to video, restyle, memory reel, vertical hook, character sheet and product clip",
+      "version": "0.1.0",
+      "category": "creative",
+      "tags": ["luma", "mcp", "video", "image", "generation", "creator"]
+    }
+  ]
+}
