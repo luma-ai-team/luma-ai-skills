@@ -96,9 +96,9 @@ IN=reel-cut.mp4; OUTFILE=reel.mp4; MUSIC=music.mp3
 GRADE="eq=contrast=1.04:saturation=1.08"          # keep it subtle; "null" for no grade
 LUFS=-16                                          # -20 or lower for a quiet ambient bed (R5)
 D=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$IN")
-FADE_AT=$(awk -v d="$D" 'BEGIN { printf "%.2f", d - 3 }')
+read FIN FOUT FADE_AT < <(awk -v d="$D" 'BEGIN { i = (d / 10 < 1 ? d / 10 : 1); o = (d / 5 < 3 ? d / 5 : 3); printf "%.2f %.2f %.2f\n", i, o, d - o }')
 ffmpeg -loglevel error -y -i "$IN" -stream_loop -1 -i "$MUSIC" -filter_complex \
-  "[0:v]${GRADE},format=yuv420p[v];[1:a]${A},atrim=0:${D},afade=t=in:d=1,afade=t=out:st=${FADE_AT}:d=3[m];[0:a]${A},volume=0.4[o];[m][o]amix=inputs=2:normalize=0:duration=first,loudnorm=I=${LUFS}:TP=-1.5:LRA=11[a]" \
+  "[0:v]${GRADE},format=yuv420p[v];[1:a]${A},atrim=0:${D},afade=t=in:d=${FIN},afade=t=out:st=${FADE_AT}:d=${FOUT}[m];[0:a]${A},volume=0.4[o];[m][o]amix=inputs=2:normalize=0:duration=first,loudnorm=I=${LUFS}:TP=-1.5:LRA=11[a]" \
   -map "[v]" -map "[a]" -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 192k -ar 48000 -movflags +faststart "$OUTFILE"
 ```
 
@@ -106,6 +106,8 @@ The short film uses the same step for a user's own song: `IN=film.mp4`, `OUTFILE
 `GRADE=null`.
 
 - `volume=0.4` is the clips' own sound under the music; `0` mutes it.
+- The fades scale with the reel: in over a tenth of it (at most a second), out over a fifth (at
+  most three seconds), so a five-second clip still has music at full level for most of its length.
 - `IN` must have an audio track (a silent one is enough): film step 6 gives every normalised clip
   one. A file with none, such as a single image-to-video or restyled clip straight from Luma, goes
   through film steps 4 and 6 first, or this step fails with "matches no streams".
@@ -113,7 +115,7 @@ The short film uses the same step for a user's own song: `IN=film.mp4`, `OUTFILE
 - Use only music the user has the right to use. With no music file and no wish for sound, skip
   this step and rename `reel-cut.mp4` to `reel.mp4`; the reel carries whatever sound the clips
   have. With no music file but a wish for a soft sound, make the bed in R5 and run this step with
-  `MUSIC=music.wav` and a lower `LUFS`.
+  `MUSIC=ambient-bed.wav` and a lower `LUFS`.
 
 Then run film step 10 on `reel.mp4` (length, loudness, contact sheet) and step 11 for the phone
 copy.
@@ -123,7 +125,7 @@ copy.
 When the user has no song but wants something soft under the reel, synthesise a slow drone: a few
 sine voices of one chord, each breathing at its own slow rate, over filtered pink noise, with a
 little echo and width. It is a soft drone, not a song: say so to the user. Make it a little longer
-than the reel (R4 loops it otherwise), then run R4 with `MUSIC=music.wav`:
+than the reel (R4 loops it otherwise), then run R4 with `MUSIC=ambient-bed.wav`:
 
 ```sh
 BEDLEN=$(ffprobe -v error -show_entries format=duration -of csv=p=0 reel-cut.mp4 | awk '{ print int($1) + 2 }')
@@ -132,7 +134,7 @@ ffmpeg -loglevel error -y \
   -f lavfi -i "sine=f=220.7:d=${BEDLEN}" -f lavfi -i "sine=f=293.66:d=${BEDLEN}" -f lavfi -i "sine=f=369.99:d=${BEDLEN}" \
   -f lavfi -i "sine=f=659.25:d=${BEDLEN}" -f lavfi -i "anoisesrc=color=pink:amplitude=0.05:d=${BEDLEN}:r=48000" \
   -filter_complex "[0]volume=0.5,tremolo=f=0.11:d=0.35[a0];[1]volume=0.4,tremolo=f=0.13:d=0.35[a1];[2]volume=0.4,tremolo=f=0.1:d=0.4[a2];[3]volume=0.3,tremolo=f=0.12:d=0.4[a3];[4]volume=0.25,tremolo=f=0.17:d=0.5[a4];[5]volume=0.18,tremolo=f=0.14:d=0.5[a5];[6]volume=0.05,tremolo=f=0.2:d=0.6[a6];[7]lowpass=f=700,highpass=f=120,volume=0.5[n];[a0][a1][a2][a3][a4][a5][a6][n]amix=inputs=8:normalize=0,lowpass=f=1400,aecho=0.8:0.6:180|360:0.35|0.22,aresample=48000,aformat=channel_layouts=stereo,stereotools=mlev=1:slev=1.6[o]" \
-  -map "[o]" -c:a pcm_s16le music.wav
+  -map "[o]" -c:a pcm_s16le ambient-bed.wav
 ```
 
 `tremolo` refuses a rate under 0.1 Hz; keep every `f=` at 0.1 or above.

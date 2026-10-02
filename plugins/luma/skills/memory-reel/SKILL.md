@@ -162,6 +162,8 @@ Follow [the ffmpeg reference](../short-film/references/ffmpeg.md) and
 4. Join with soft crossfades such as `fade` or `dissolve` (ffmpeg step 9a) into `reel-cut.mp4`.
 5. One grade and the music, or the quiet ambient bed, under the whole reel (R4, R5).
 6. Check the length, loudness and a contact sheet (ffmpeg step 10), then the phone copy (step 11).
+   For a reel going to Instagram or TikTok, set `LUFS=-14` in R4 and add the posting copies and
+   the cover frame from [the social finish](../_shared/social-finish.md) (F7, F8).
 
 Hand over: the paths of both files, the running time, and the manifest with every
 `generation_id`. Offer changes: a new order, title, transition or song is only a re-cut; a new

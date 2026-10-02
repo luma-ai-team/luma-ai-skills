@@ -1,6 +1,6 @@
 ---
 name: vertical-hook
-description: Use when the user wants a short vertical clip for Reels, TikTok or Shorts that grabs attention in the first second, from an idea, a photo or a Luma picture, optionally as a loop. Writes the hook first, makes the variants in the vertical shape and shows them.
+description: Use when the user wants a short vertical clip for Reels, TikTok or Shorts that grabs attention in the first second: from an idea or a photo, as a loop, a character doing a trend's movement, or their own video made vertical. Writes the hook first, then makes it.
 title: Make a vertical hook clip
 needs_shell: false
 ---
@@ -23,7 +23,9 @@ else, pick a default, state your picks in one line with the plan, and go ahead.
   none, write one per variant yourself, each a different first second.
 - **The starting point**: an idea only (the default); a photo (a direct https link to the image
   file, or a file path when you have a shell; Luma cannot read a file attached to the chat); or one
-  of their Luma pictures, such as a still from the `character-sheet` or `product-clip` workflows.
+  of their Luma pictures, such as a still from the `character-sheet` or `product-clip` workflows;
+  a video of theirs to make vertical (route F); or a photo of a character plus a video of the
+  movement it should copy (route E).
 - **Sound**: sound made with the clip, or silent with a sound added in the posting app (often what
   creators want, since the app offers its own library). Silent, unless the brief asks for sound;
   say in one line that a version with sound can be made.
@@ -36,9 +38,10 @@ else, pick a default, state your picks in one line with the plan, and go ahead.
 
 ## 2. Find the vertical shape in the catalog
 
-Never type a ratio from memory. `get_account` (consent), then `list_models` for
-`text-to-image` (for a still), `text-to-video` (for a clip from words), and `image-to-video` and
-`frames` (models and durations for clips made from stills).
+Never type a ratio from memory. `get_account` (consent), then `list_models` for the features the
+route uses: `text-to-image` (for a still), `text-to-video` (for a clip from words), `image-to-video`
+and `frames` (models and durations for clips made from stills), `motion-control` (route E) and
+`reframe` (route F).
 
 - In a row's `aspect_ratios`, read each value as width:height and take the portrait one (height
   greater than width). If a row lists more than one, full-screen phone feeds want the tallest; use
@@ -59,6 +62,8 @@ Luma").
 | **B. Straight from words** | Speed, or sound made with the clip | `generate_video` `mode: "text"` with the portrait `aspect_ratio`, and for sound `audio: true` with the model of a row that has the audio variant |
 | **C. Two stills** | A before and after, a reveal, a transformation | two vertical stills (the second an edit of the first), then `generate_video` `mode: "frames"` |
 | **D. Loop** | The user wants it to repeat without a visible cut | section 5 |
+| **E. Copy a movement** | A mascot, a model or a character doing a dance, a gesture or a trend | a vertical photo of the character, then `edit_video` `mode: "motion"` with the movement video (section 5b) |
+| **F. Their own video, made vertical** | A landscape or square clip they already have | `edit_video` `mode: "reframe"` with the portrait `aspect_ratio` from `list_models` `{"feature": "reframe"}` |
 
 - **A photo in the wrong shape**: `generate_image` `mode: "edit"` with the portrait `aspect_ratio`
   and "The same <subject>, unchanged. The whole subject in frame, with space above and below."
@@ -68,7 +73,8 @@ Luma").
 - **Route A's still is the first frame**, so make it the hook itself: the moment of most tension or
   surprise, not the calm before it. Say where the subject sits, such as "the loaf centred in the
   frame, its top at the middle of the picture, empty space above". Then look at the still with the
-  bottom fifth and the right sixth covered, the parts a feed hides: the hook must still read.
+  parts the app covers blanked out ([social finish F2](../_shared/social-finish.md): the top
+  eighth, the bottom fifth and the right eighth): the hook must still read.
 - Frames model values differ from text-to-video ones; read the `frames` row for route C and D.
 
 ## 4. Write the hook
@@ -83,8 +89,7 @@ next>. <Camera: fast push-in, whip pan, handheld close-up>. <The payoff, before 
 - The first frame already shows the subject, big and centred. No empty establishing frame, no fade
   in.
 - One idea per clip. The payoff lands before the clip ends.
-- Keep faces, the product and any later text in the middle of the frame: vertical feeds cover the
-  top and bottom edges and the right side with buttons and captions.
+- Keep faces, the product and any later text out of the parts the app covers (social finish F2).
 - Do not ask the model for words on screen; they often come out garbled.
 - **Variants change the opening, not everything**: the same subject and look, two or three
   different first seconds.
@@ -122,6 +127,34 @@ there is no shell. Name the choice in the plan line.
      a step, speech), so prefer the variant whose motion is camera-led, and watch the backward half
      before offering it.
   2. **No loop**: post the best variant; the app replays it with a visible cut.
+
+## 5b. Copy a movement (route E) and make a video vertical (route F)
+
+- **The movement** comes from a video: the user's own recording of the move, or one they have the
+  right to use. Upload it (`upload_media`; it may be an `upload_id`) or take one of their Luma
+  videos. Its length and size must fit `list_models` `{"feature": "motion-control"}`
+  `source_limits`; trim it first with a shell when it is longer. The result runs about as long as
+  it. The hook rule holds: the move must already be happening in its first frame, so trim any
+  wind-up off the source. A good source has a static camera, the whole body in frame all the way
+  through, one clear move, a plain background and no one else in it. When the user has no such
+  video and wants one made, make it with route B (`generate_video` `mode: "text"`, the portrait
+  `aspect_ratio`) and those words in the prompt, not the hook's fast camera.
+- **The character** is a photo: one person or character, whole body when the move uses the whole
+  body, in the vertical shape (make it with route A's still if it is not), on a plain background.
+  The result starts in the photo's pose, so pose the character like the movement video's first
+  frame (arms up if its arms are up), not standing still. Only a real person who agreed to it.
+- **The call** takes no prompt: `edit_video {"mode": "motion", "video": {...}, "image": {...},
+  "client_request_id": "..."}`, with `model` optional from that feature's rows. `audio` is optional
+  too; left out, the result came back silent in testing. A dance's music goes on in the edit
+  (social finish F5) or in the app.
+- **Check the face and hands** on a contact sheet of the result ([ffmpeg step 3](../short-film/references/ffmpeg.md))
+  and on a full frame at the fastest moment of the move: the face stays the character's, the hands
+  stay hands, no extra limbs. Hands blurring into soft fists in a fast swing is normal; a drifted
+  face or a melted limb is retaken or dropped, not posted.
+- **Route F** keeps their footage and redraws the edges into the new shape: `edit_video
+  {"mode": "reframe", "video": {...}, "aspect_ratio": "<portrait value>", "client_request_id":
+  "..."}`. Check that nothing new appeared at the edges that the brief would not want. When the
+  first second of their video is not a hook, say so and suggest trimming it to start on the action.
 
 ## 6. Plan in one line, then run
 
@@ -166,12 +199,18 @@ generate_video {"mode": "frames", "start_image": {"generation_id": "<still v1>"}
   (a loop keeps its last frame), fades the words in fast and out before the end, checks a middle
   frame for words over the hook, and makes a copy for posting with no audio track for the app to
   fill. Clips from different routes come out at different sizes; finish each variant on its own.
+  When the hook also gets music, effects or captions from the social finish, its F7 copies replace
+  H1's posting copy.
 - **Without a shell**: list the variants, each with what its opening does, `media_url` and
   `generation_id`, which one to post first, and the words and sound to add in the app. Say the
   links expire in an hour and `list_generations` finds them later.
+- **Speech, music and captions**: a hook with someone talking gets captions, and any hook can get
+  music under it and a sound effect on its first cut, with [the social finish](../_shared/social-finish.md)
+  (F3, F5, F6). It also makes the posting copies and the cover frame (F7) and checks them (F8).
 - Next steps, each a new job with a new key, made when the user asks: extend the winner
   (`generate_video` `mode: "extend"`; it takes no `aspect_ratio`, so check the result is still
-  vertical), another opening, a restyle (`restyle`).
+  vertical), another opening, a restyle (`restyle`), a sharper copy of the winner (`edit_video`
+  `mode: "enhance"`).
 
 ## When something goes wrong
 

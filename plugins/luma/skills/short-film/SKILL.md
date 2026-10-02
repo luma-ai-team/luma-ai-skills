@@ -177,6 +177,9 @@ Follow [the ffmpeg reference](references/ffmpeg.md) in order:
 5. Check the length, the loudness, unplanned silence and a contact sheet of the cut (step 10). Fix
    and re-cut until it is clean.
 6. Make the phone copy (step 11).
+7. When the film is going on social media, offer a social cut with [the social finish](../_shared/social-finish.md):
+   a vertical master (an `edit_video` reframe of the shots, or a crop), captions for any speech,
+   -14 LUFS and the posting copies. Make it when the user asks.
 
 Hand over: the paths of both files, the running time, and the shot list with every
 `generation_id`. Offer changes: a new cut, title or transition is only a re-edit here; a new shot

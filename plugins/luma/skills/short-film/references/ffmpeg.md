@@ -337,7 +337,7 @@ identical in format:
 printf "file '%s'\n" c01t.mp4 c02.mp4 c03.mp4 c99.mp4 > cuts.txt
 ffmpeg -loglevel error -y -f concat -safe 0 -i cuts.txt -c copy cuts-raw.mp4
 ffmpeg -loglevel error -y -i cuts-raw.mp4 -c:v copy -af loudnorm=I=-16:TP=-1.5:LRA=11 \
-  -c:a aac -b:a 192k -ar 48000 -movflags +faststart film.mp4
+  -c:a aac -b:a 192k -ar 48000 -shortest -movflags +faststart film.mp4
 ```
 
 When no clip has sound and none is wanted (a silent showreel), make a file with no audio track in
