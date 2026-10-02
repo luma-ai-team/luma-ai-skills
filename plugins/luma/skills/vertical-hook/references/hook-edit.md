@@ -29,8 +29,9 @@ ffmpeg -loglevel error -y -i c01.mp4 -loop 1 -t "$L" -i hook_words.png -filter_c
 ffmpeg -loglevel error -y -ss "$(awk -v l="$L" 'BEGIN { print l / 2 }')" -i c01t.mp4 -frames:v 1 words-check.jpg
 ```
 
-Look at `words-check.jpg`. The feed covers the top and bottom edges and the right side with its
-own buttons and captions, so the words belong in the middle band, clear of the subject. If they
+Look at `words-check.jpg`. The feed covers the top eighth, the bottom fifth and the right eighth
+with its own buttons and captions ([social finish F2](../../_shared/social-finish.md)), so the words
+belong in the middle band, clear of the subject. If they
 sit over the hook, render the PNG again with `--at=0.15` (higher) or `--at=0.60` (lower).
 
 Most creators add the sound in the posting app. For that, a copy with no audio track, small

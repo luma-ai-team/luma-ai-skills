@@ -1,14 +1,15 @@
 # Luma AI skills for Claude Code
 
-Eight workflows for making pictures, clips and short films with your own Luma AI account, from
-inside Claude Code.
+Ten workflows for making pictures, clips, ads and short films with your own Luma AI account, from
+inside Claude Code: product clips and talking ads for a shop, hooks and every-feed copies for social
+media, and the finish that makes them postable (captions, music under the voice, sound, loudness).
 
 This is for Luma AI, at [luma.ai](https://luma.ai). Luma Labs and Dream Machine are different
 products, and this plugin does not connect to them.
 
 The plugin does two things. It connects Claude Code to the Luma MCP at `https://luma.ai/api/mcp`,
-and it adds one skill per workflow. Each skill fixes the order Claude works in: ask only what your
-brief leaves out, make it, check it and show you the result.
+and it adds one skill per workflow. Each skill fixes the order Claude works in: ask only what is
+missing, say the plan in one line, make it, check it, and show you the result.
 
 ## Install
 
@@ -33,10 +34,10 @@ link to your account page. Claude Code still asks your permission before it runs
 you allow it. Prices, lengths, shapes and models come from Luma's catalog when the workflow runs, so
 this page names none of them.
 
-Use photos you own or have the right to use. Luma's content policy applies, and the tools enforce
-it.
+Use photos, footage, faces and voices you own or have the right to use. Luma's content policy
+applies, and the tools enforce it.
 
-## The eight workflows
+## The ten workflows
 
 Type a command, or describe what you want and Claude picks the workflow.
 
@@ -49,11 +50,15 @@ Type a command, or describe what you want and Claude picks the workflow.
 | `/luma:memory-reel` | Turn photos into a memory reel. Five to ten photos become a short recap with transitions and music. |
 | `/luma:vertical-hook` | Make a vertical hook clip. A social clip that opens on the hook, with an optional loop from matching first and last frames. |
 | `/luma:character-sheet` | Keep a character consistent. One character across angles, outfits and scenes, ready for the film and hook workflows. |
-| `/luma:product-clip` | Make a product clip. A product photo cleaned up, then short motion treatments in vertical and square. |
+| `/luma:product-clip` | Make a product clip. A product photo cleaned up, then short motion treatments in vertical and square, reframed, or restaged for a season or a scene. |
+| `/luma:talking-ad` | Make a talking ad. A face, your own voice recording and your product become a captioned vertical ad with product shots and music. |
+| `/luma:every-feed` | Fit a video to every feed. One video in, a copy for every feed out: the subject whole in each shape, sharpened, and checked before you post. |
 
-`/luma:short-film` and `/luma:memory-reel` join clips with ffmpeg on your machine. Without ffmpeg,
-or in a client with no shell, they give you the clips in order with a suggested edit instead of one
-file.
+`/luma:short-film`, `/luma:memory-reel` and `/luma:talking-ad` join clips with ffmpeg on your
+machine, and every workflow can finish a clip for posting the same way: captions timed to the
+speech, music that drops under the voice, a few sound effects, -14 LUFS, and a copy per platform.
+Without ffmpeg, or in a client with no shell, they give you the clips in order with a suggested edit
+instead of one file.
 
 ## If Luma is not connected
 

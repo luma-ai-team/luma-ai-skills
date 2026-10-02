@@ -24,9 +24,11 @@ available, carry on here.
 | One photo brought to life, "make this photo move" | `photo-to-video` |
 | A photo, or one of their Luma videos, redrawn in a look (anime, oil paint, noir) | `restyle` |
 | Several photos from a trip or an event turned into one recap clip | `memory-reel` |
-| A vertical clip for social media that grabs attention in the first second, or a loop | `vertical-hook` |
+| A vertical clip for social media that grabs attention in the first second, a loop, a character doing a trend's movement, or their own video made vertical | `vertical-hook` |
 | The same character kept consistent across several pictures or scenes | `character-sheet` |
-| A product photo turned into clean shop or ad clips | `product-clip` |
+| A product photo turned into clean shop or ad clips, or a product video changed for a season or a scene | `product-clip` |
+| A talking-head, UGC or spokesperson ad: a face and a voice recording selling a product | `talking-ad` |
+| One video they already have, in the other shapes for Reels, a feed, YouTube or a shop, or sharper | `every-feed` |
 
 ## Ask only for what is missing, in one message
 
@@ -59,6 +61,17 @@ Everything else, pick a sensible default, state it in the plan line, and go ahea
 | One of their clips, longer | `generate_video` `mode: "extend"` |
 | A ready-made effect on one or more photos | `apply_template` `kind: "effect"` |
 | One of their clips in a look | `apply_template` `kind: "style"` |
+| Change something in a video (a new background, outfit, season or character) | `edit_video` `mode: "edit"` with `video` and `prompt` |
+| A video in another shape (vertical for Reels, square for a feed) without cutting anything off | `edit_video` `mode: "reframe"` with `video` and `aspect_ratio` |
+| A video sharper or smoother (higher resolution or frame rate) | `edit_video` `mode: "enhance"` with `video` |
+| The person or character in a photo doing the movement of a video | `edit_video` `mode: "motion"` with `video` and `image` |
+| The face in a photo speaking or singing an audio file | `lip_sync` with `image` and `audio_file` |
+
+`edit_video` takes a video the user uploaded (`upload_media`, an `upload_id`) as well as one of
+their Luma videos; nothing else does. Its result, like a lip-sync, is as long as the source (the
+audio, for a lip-sync), which must fit the `source_limits` of its feature in `list_models`. Motion
+and lip-sync put a real face to work: only a face the user owns or has that person's permission to
+use, and a voice they have the right to use.
 
 Two rules of thumb:
 
@@ -137,6 +150,8 @@ have its `media_url` first; if `generate_image` answered with `poll_after_second
   they can judge whether it is wide enough.
 - If the user wants several clips joined into one file, that is the `short-film` workflow's finish;
   its [ffmpeg reference](../short-film/references/ffmpeg.md) has the commands.
+- For a clip that will be posted or used in a shop, offer [the social finish](../_shared/social-finish.md):
+  captions, music under the voice, the frame and loudness each platform wants.
 
 ## When something goes wrong
 

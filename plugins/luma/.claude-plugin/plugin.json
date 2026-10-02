@@ -1,7 +1,7 @@
 {
   "name": "luma",
-  "description": "Make pictures, clips and short films with your Luma AI account from Claude Code. Connects the Luma MCP over OAuth and adds eight workflows that turn a brief into a finished piece with your Luma credits.",
-  "version": "0.2.0",
+  "description": "Make product clips, talking ads, social hooks and short films with your Luma AI account from Claude Code. Connects the Luma MCP over OAuth and adds ten workflows, with captions, music and sound for the finish.",
+  "version": "0.3.0",
   "author": {
     "name": "Luma AI Ltd",
     "url": "https://luma.ai"

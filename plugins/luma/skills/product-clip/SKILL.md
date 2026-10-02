@@ -1,6 +1,6 @@
 ---
 name: product-clip
-description: Use when the user wants short clips of a product for a shop, an ad or social media, starting from a photo of the product. Cleans the photo up with an image edit, then makes a few motion treatments in vertical and square.
+description: Use when the user wants short clips of a product for a shop, an ad or social media, from a photo of the product, or a product video changed for a season or a scene. Cleans the photo up, makes motion treatments in vertical and square, and can restage a clip.
 title: Make a product clip
 needs_shell: false
 ---
@@ -36,6 +36,9 @@ ahead.
   background in a soft neutral colour.
 - **Brand colours**, if the brief gives any.
 - **How many treatments**: the number the brief gives, otherwise three.
+- **A video they already have**: a product clip of theirs (an `upload_id` from `upload_media`, or
+  one of their Luma videos) can skip the stills and go straight to step 7b to be restaged for a
+  season, a scene or a colourway.
 
 Say up front that the clips come out silent. With a shell, music the user has the right to use
 can go on afterwards, over a showreel per shape (step 8).
@@ -65,6 +68,15 @@ can go on afterwards, over a showreel per shape (step 8).
 Image-to-video takes no `aspect_ratio`: each clip takes the shape of its still. That is why the
 stills are made once per shape.
 
+When every shape must show the same motion (one ad set across feeds), there is a second route:
+animate the stills of one shape only, then turn each checked clip into the other shape with
+`edit_video` `mode: "reframe"`, which redraws the clip in the new shape instead of cutting it. Read
+`list_models` `{"feature": "reframe"}` for its `aspect_ratios` and `source_limits`. Reframe takes
+no prompt, keeps the clip at its own size and invents the rest of the new shape: from vertical to
+square that is the sides, and on a plain studio background it tends to add props (in testing, a
+vase of flowers and a ledge). For a studio look, keep the default route. Say which route you took in the plan line,
+and check the reframed edges for anything added as well as for the product itself.
+
 ## 4. Plan the treatments
 
 Choose the treatments that fit the product, as many as step 1 settled, and name them in the
@@ -73,7 +85,7 @@ plan line:
 | Treatment | Motion prompt to adapt |
 |---|---|
 | Slow turn | "The camera orbits slowly around the product; soft reflections move across its surface." See the note below. |
-| Push-in with light | "Slow push-in toward the product while a soft band of light sweeps across it." |
+| Push-in with light | "Slow push-in toward the product while a soft band of light sweeps across it." The push-in enlarges the product, so its still needs wide side margins (step 6). |
 | Float | "The product lifts a little and floats, turning gently, a soft shadow below it." |
 | In use | "A hand enters the frame and picks up the product." Hands can come out wrong; check. |
 | Reveal | One edit of the checked still (for example a close-up, or the product open) as one end and the checked still as the other, joined with `generate_video` `mode: "frames"`. Ending on the checked still lands the clip on the same framing as the others. |
@@ -88,19 +100,22 @@ or Reveal.
 - `get_account` (consent) if not read in step 3.
 - Say the plan in one line with its count: one still per shape, plus treatments times shapes. For
   two shapes and three treatments that is two stills and six clips. A Reveal adds one edit and one
-  `frames` clip per shape; an effect adds one `apply_template` per shape.
+  `frames` clip per shape; an effect adds one `apply_template` per shape. On the reframe route it
+  is one still, the treatments, and one reframe per treatment per extra shape.
 - Then run it: the clean stills, your check of them, then the clips, without stopping between. See
   Credits in the cheat sheet: the request is the go-ahead.
 
 ## 6. Make the clean stills
 
 ```
-generate_image {"mode": "edit", "image": {"upload_id": "<id>"},
+generate_image {"mode": "edit", "image": {"upload_id": "<id>"},   # or {"generation_id": "<id>"} for a Luma picture
   "prompt": "The same <product>, unchanged: same shape, colours and proportions, and the same <its label, logo, pattern or handle: name each visible feature>. <setting>. Soft studio light from <side>. The whole product in frame, centred, with space around it.",
   "aspect_ratio": "<the vertical value from list_models>", "client_request_id": "<product>-<run>-still-vertical"}
 ```
 
-Then the same with the square value and `<product>-<run>-still-square`. `<run>` is four random
+Then the same with the square value and `<product>-<run>-still-square`. For a Push-in, ask for
+the product to fill no more than half the frame's width: by the end of the move it is half as big
+again, and on a vertical feed the right edge is under the app's buttons. `<run>` is four random
 characters chosen once for this conversation (see the cheat sheet), such as `k7f2`.
 
 - Wait for each `media_url`, then compare it with the original: label text, logo, colours,
@@ -126,10 +141,37 @@ generate_video {"mode": "frames", "start_image": {"generation_id": "<reveal a>"}
 apply_template {"kind": "effect", "key": "<key>", "images": [{"generation_id": "<checked still>"}], "client_request_id": "<product>-<run>-fx-<shape>"}
 ```
 
-A Reveal's edit (`reveal-a`) must have its `media_url` before the `frames` call.
+```
+edit_video {"mode": "reframe", "video": {"generation_id": "<checked clip>"}, "aspect_ratio": "<the other shape, from list_models feature reframe>",
+  "client_request_id": "<product>-<run>-<treatment>-reframe-<shape>"}
+```
+
+A Reveal's edit (`reveal-a`) must have its `media_url` before the `frames` call, and a reframe or
+a restage (step 7b) starts only once its clip has its `media_url`.
 Check the effect clip's shape; it may not follow the still. Start clips in batches of about five,
 then poll each with `get_generation` (`wait_seconds` up to 25) until `poll_after_seconds` is null.
 A retake, when the user asks for one, gets a new key (`...-t2`).
+
+## 7b. Restage a clip: a season, a scene, a colourway
+
+When the user wants the same product clip in another setting (a holiday table, a beach, a
+night-time version for a campaign, a background in their brand colour), change the finished clip
+instead of making a new one: the motion stays, the scene changes. One job per variant, as many as
+they ask for:
+
+```
+edit_video {"mode": "edit", "video": {"generation_id": "<checked clip>"},
+  "prompt": "The same <product>, unchanged: same shape, colours, label and logo, and the same movement. Only the setting changes: <the new scene, its light and colours>.",
+  "client_request_id": "<product>-<run>-<treatment>-<variant>"}
+```
+
+`model` is optional; read `list_models` `{"feature": "edit"}` for the models and the
+`source_limits` the clip must fit. The clip can also be the user's own video, as
+`{"upload_id": "..."}`. Hold each variant to the accuracy rule: an edit that redraws the label or
+changes a colour of the product is not used. Warm or cool light changes how a colour reads; judge
+the product's colour in its own highlights and shadows against the original, and tell the user
+when the new light makes it look different, so they decide whether it still sells the right one. Variants that differ only in the setting are what an
+ad test needs, so keep everything else the same.
 
 ## 8. Check and deliver
 
@@ -142,16 +184,24 @@ A retake, when the user asks for one, gets a new key (`...-t2`).
   shapes: in each folder run [ffmpeg steps 4, 6 and 9b](../short-film/references/ffmpeg.md) with
   `R` set to that shape (`vertical` or `square`), then rename `film.mp4` to
   `<product>-<shape>.mp4`. Clips of one shape still differ in size by route (a `frames` clip is
-  larger than an image-to-video one); step 4 sizes them to one frame.
+  larger than an image-to-video one); step 4 sizes them to one frame. Each clip's seconds for step
+  6 are its own length (`ffprobe`), trimmed only where it drifts at the end.
 - If the user has music they may use, add it over each showreel with
   [reel edit R4](../memory-reel/references/reel-edit.md), in the same shell as step 4, with R4's
   first lines set to `IN=<product>-<shape>.mp4; OUTFILE=<product>-<shape>-music.mp4;
-  MUSIC=<their file>` and `GRADE=null`.
+  MUSIC=<their file>`, `GRADE=null` and `LUFS=-14`. For an ad, [the social finish](../_shared/social-finish.md)
+  adds what makes it look finished, in its order: copy the music file to `master-<shape>.mp4`,
+  then a few sound effects (F6), a cover frame and a silent copy for the shop page (F7), and the
+  check of every file (F8), including the safe area (F2).
   If not, deliver the silent showreels as
   they are, made with step 9b's no-audio variant; step 10's loudness and silence checks then have
   nothing to measure, so run only its length and sheet lines.
 - **Without a shell**: list the clips grouped by shape: treatment, `media_url`, `generation_id`.
   Say the links expire in an hour and `list_generations` finds them later.
+- **For a product page or a paid ad**, offer a sharper copy of the chosen clips with
+  `edit_video` `mode: "enhance"` (`resolution` and `frame_rate` from `list_models`
+  `{"feature": "upscale"}`, or neither for the default quality); make it when the user asks, a new
+  key per clip. Enhance the chosen clips, not every take.
 
 ## When something goes wrong
 
