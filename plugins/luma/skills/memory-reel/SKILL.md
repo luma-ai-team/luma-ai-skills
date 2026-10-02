@@ -19,24 +19,32 @@ Run `ffmpeg -version` and `python3 -c "import PIL"`.
 - **ffmpeg present**: you will deliver one reel file, plus a smaller copy for phones.
 - **No shell or no ffmpeg** (claude.ai, the phone app): tell the user now that you will make one
   clip per photo and hand them over in order with an edit plan, and that the joining, the music and
-  the title happen in the app they edit or post with. Ask whether to continue on that basis.
+  the title happen in the app they edit or post with. Then carry on.
 
-## 2. Ask first, in one message
+## 2. Ask only for what is missing, in one message
+
+The photos are the one thing only the user can give. Ask for them when the brief has no way to
+reach them; for everything else, pick a default, state your picks in one line, and go ahead.
 
 - **The photos, and how they reach Luma.** Luma cannot read files attached to the chat. Ask for a
   direct https link to each image file, the paths of files on this computer (only with a shell), or
   their Luma pictures. If they attached photos, say plainly that you cannot pass them to Luma from
   the chat.
-- **The occasion and the mood**: a birthday, a trip, a wedding; joyful, calm, nostalgic.
-- **The order**: as given, or a story order you propose (arrival, the day, the evening).
+- **The occasion and the mood**: a birthday, a trip, a wedding; joyful, calm, nostalgic. From the
+  brief, otherwise warm and gentle.
+- **The order**: as given, or a story order you propose (arrival, the day, the evening) when the
+  brief asks for one.
 - **The shape and where it goes**: vertical for a phone status, story or reel, landscape for a TV
-  or a laptop, and any length limit of the place they will post it.
-- **Music**: a song file they have the right to use (with a shell), or none. If they have none but
-  say a soft sound is fine, tell them you will lay a quiet ambient bed under the reel
-  ([reel edit R5](references/reel-edit.md)); these tools do not make songs. If they want silence,
-  or a song added later in their app, say so and skip it.
-- **Words**: a title for the start (such as a place and a date) and an end line, or none.
-- **Rights**: the photos are theirs or they may use them, and the people in them agreed.
+  or a laptop, and any length limit of the place they will post it. When the brief does not say,
+  vertical.
+- **Music**: a song file they have the right to use (with a shell), when the brief gives one.
+  Otherwise the reel is left ready for their own song, and you say in one line that a quiet
+  ambient bed ([reel edit R5](references/reel-edit.md)) can go under it; these tools do not make
+  songs. If they want silence, or a song added later in their app, skip it.
+- **Words**: a title for the start (such as a place and a date) and an end line, when the brief
+  gives them; otherwise none.
+- **Rights**: the photos must be theirs or ones they may use, and the people in them must have
+  agreed. Say so in one line.
 
 ## 3. Bring the photos in
 
@@ -60,7 +68,8 @@ Luma applies the flag itself.
 
 ## 4. Choose one look for the whole reel
 
-A reel feels like one piece when every clip moves the same way. Offer these and let the user pick:
+A reel feels like one piece when every clip moves the same way. Use the natural look unless the
+brief asks for accents or an illustrated look, and name the look in the plan line:
 
 | Look | How | Generations |
 |---|---|---|
@@ -71,45 +80,43 @@ A reel feels like one piece when every clip moves the same way. Offer these and 
 - **The motion prompt** names what moves in this photo, then the same camera line every time:
   "Hair and dresses stir in the breeze, the candles flicker, people laugh and lean in a little. Slow
   push-in, gentle and steady." Keep people's motion small; big actions bend faces.
-- **The illustrated look** turns faces into the style. After the quote in step 6 (which counts
-  it), style one photo first, show it, and get a yes on the look before styling the rest.
+- **The illustrated look** turns faces into the style. Style one photo first and check it
+  yourself: when the faces still read as the same people, style the rest; when they do not, stop,
+  show it, and offer the natural look instead.
 - **Sound**: image-to-video clips are silent; an effect may bring its own soundtrack, which goes
   low under the music. With a shell, one colour grade over the finished reel also helps photos from
   different phones match ([reel edit step R4](references/reel-edit.md)).
-- Show three to five effects with their `preview_url` before choosing accents, and for the
-  illustrated look three styles with theirs.
+- Choose accents and the illustrated style by their `preview_url`. When the brief asks for an
+  illustrated look but names no style, show the user three styles with their `preview_url` and let
+  them pick: a choice of look only they can make.
 
 ## 5. Shape and length
 
 - **Image-to-video takes no `aspect_ratio`**: each clip keeps its photo's shape, and phone photos
   mix portrait and landscape. With ffmpeg, the edit fits each clip into the reel's shape, either
   cropped to fill or whole over a blurred copy of itself ([R2](references/reel-edit.md)). This
-  costs nothing and changes nothing in the people.
+  needs no generation and changes nothing in the people.
 - **Only if the user wants every clip full-frame without cropping**, first make a still per photo
   in the reel's shape: `generate_image` `mode: "edit"` with `aspect_ratio` and "Same photo, the
   same people with the same faces and clothes, unchanged; extend the scene to fill the frame." An
   edit redraws the whole picture, so faces can change: compare each with the original. It doubles
-  the generation count; quote it separately. Take the ratio from the `image-edit` row of
-  `list_models`, or the `text-to-image` row when that one lists none. `estimate_cost` does not
-  check shapes, so an unlisted one can fail only after the call starts, as a provider refusal that
-  returns the credits.
+  the generation count; say so in the plan line. Take the ratio from the `image-edit` row of
+  `list_models`, or the `text-to-image` row when that one lists none. The rows are the only check
+  on a shape: an unlisted one fails only after the call starts, as a provider refusal that returns
+  the credits.
 - **Length**: use one `image-to-video` duration from `list_models` for every clip (a recap moves
   quickly, so the shortest listed usually fits). The reel is the clips' sum minus the transitions,
-  and clips can be trimmed in the edit. Tell the user the length that gives, and adjust the photo
-  count or duration with them. For a status or a story keep it short: trim each clip in the edit
-  (`norm ... <seconds>`) and check the app's current limit.
+  and clips can be trimmed in the edit. Say the length that gives in the plan line. For a status
+  or a story keep it short: trim each clip in the edit (`norm ... <seconds>`) and check the app's
+  current limit.
 
-## 6. Plan and quote
+## 6. Plan in one line
 
-1. `get_account` (balance, consent). `list_models` `{"feature": "image-to-video"}`, plus
-   `image-edit` if you reshape the photos.
-2. Say the plan in one line: how many clips, how many effects, how many stills.
-3. `estimate_cost` once per distinct call shape, with a real photo as input and exactly the
-   arguments you will send: the animation (model, duration), each effect key, the style or edit
-   still. Multiply by the counts and add them up.
-4. Show the count of each kind, the total, the balance and whether it is enough. Say that a retake
-   of any clip costs one more clip. When the budget is tight, offer fewer photos, or two photos as
-   a test first. Wait for the user's yes.
+1. `get_account` (consent). `list_models` `{"feature": "image-to-video"}`, plus `image-edit` if you
+   reshape the photos.
+2. Say the plan in one line: the look, how many clips, how many effects, how many stills, and the
+   reel's length.
+3. Then make the clips. See Credits in the cheat sheet: the request is the go-ahead.
 
 ## 7. Make the clips
 
@@ -137,8 +144,9 @@ generate_image {"mode": "style", "image": {"upload_id": "<photo 3>"}, "style": "
   ([ffmpeg steps 2 and 3](../short-film/references/ffmpeg.md)). Look at it yourself first.
 - Look for a face that changed or warped, extra or melted fingers, a person appearing or vanishing,
   motion that fights the photo. A warped face of someone the user loves is worse than no motion.
-- For a bad clip, offer a retake with calmer motion (a new key, quoted), or, with a shell, the
-  photo itself with a slow zoom at no cost ([R3](references/reel-edit.md)). Retakes need a yes.
+- For a bad clip, say which and why, and offer a retake with calmer motion (a new key), made when
+  the user asks, or, with a shell, the photo itself with a slow zoom, which needs no generation
+  ([R3](references/reel-edit.md)).
 
 ## 9. Cut the reel (with ffmpeg)
 
@@ -156,8 +164,8 @@ Follow [the ffmpeg reference](../short-film/references/ffmpeg.md) and
 6. Check the length, loudness and a contact sheet (ffmpeg step 10), then the phone copy (step 11).
 
 Hand over: the paths of both files, the running time, and the manifest with every
-`generation_id`. Offer changes: a new order, title, transition or song is free; a new clip is
-quoted first.
+`generation_id`. Offer changes: a new order, title, transition or song is only a re-cut; a new
+clip is a new job with a new key, made when the user asks.
 
 ## 10. Without a shell: the edit plan
 
@@ -179,9 +187,12 @@ and that `get_generation` or `list_generations` gives fresh links later.
   `from_url` needs a shell and `action: "start"`.
 - **Moderation refused a photo or a prompt**: final for that input. Tell the user which photo; the
   reel goes on without it. Do not crop, edit or reword to get it through.
-- **Credits run out midway**: stop. Report which clips are made (ids and links), what remains and
-  its quote, and the account link. Resume later from the manifest or `list_generations`.
-- **A clip failed**: show `error.message` and `refunded`; a retry is a new job, quoted, new key.
+- **Credits run out midway** (`insufficient_credits`): stop and do not retry. Hand over the clips
+  made so far (ids and links), say once that the balance does not cover the rest, give the account
+  link from the refusal, and list the photos still to animate. Offer a shorter reel from fewer
+  photos. Resume later from the manifest or `list_generations`.
+- **A clip failed**: read `error.message`, `retryable` and `refunded`. When `retryable` is true, run
+  it once more as a new job with a new key, and tell the user only if that one fails too.
 - **A session dropped**: `list_generations` `{"kind": "video"}` and match the prompts to the
   manifest.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

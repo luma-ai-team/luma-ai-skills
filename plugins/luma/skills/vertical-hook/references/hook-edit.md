@@ -1,8 +1,9 @@
 # Finishing a hook clip with ffmpeg
 
 Commands for the vertical-hook finish: words on screen, a copy for posting, the loop's seam check
-and the free mirror loop. They build on [the short-film ffmpeg reference](../../short-film/references/ffmpeg.md)
-and use its `title.py` (step 8). Run them in one project folder, in bash or zsh. Numbers shown
+and the mirror loop, which needs no new generation. They build on
+[the short-film ffmpeg reference](../../short-film/references/ffmpeg.md) and use its `title.py`
+(step 8). Run them in one project folder, in bash or zsh. Numbers shown
 (seconds, fades, positions) are edit choices, not catalog values.
 
 ## H1. Words on screen, and a copy for posting
@@ -62,7 +63,7 @@ The seam (the first `All:` number, 1 means identical) should score about as high
 neighbouring frames (the second) or higher; clearly lower is a jump the eye will catch. Then watch
 `seam.jpg` and the three-times copy: the numbers do not see a colour shift or an object that pops.
 
-## H3. The mirror loop (free)
+## H3. The mirror loop (no new generation)
 
 The clip forward, then backward, with no seam by construction. The backward half drops its first
 and last frames, which are the same frames the forward half ends and starts on, so it plays
