@@ -41,7 +41,7 @@ Example: "Same keeper, same grey beard and yellow oilskin coat, now outside on t
 sunrise holding a steaming tin mug. Same film look, warm light."
 
 - Name what stays before what changes. Change one thing per edit; chain edits for more.
-- Edit from the best approved picture of the subject every time, not from the last edit, so small
+- Edit from the best checked picture of the subject every time, not from the last edit, so small
   drifts do not add up.
 
 ## Animate a picture (`generate_video` image)

@@ -1,6 +1,6 @@
 ---
 name: vertical-hook
-description: Use when the user wants a short vertical clip for Reels, TikTok or Shorts that grabs attention in the first second, from an idea, a photo or a Luma picture, optionally as a loop. Writes the hook first, makes a few variants in the vertical shape, quotes each and shows them.
+description: Use when the user wants a short vertical clip for Reels, TikTok or Shorts that grabs attention in the first second, from an idea, a photo or a Luma picture, optionally as a loop. Writes the hook first, makes the variants in the vertical shape and shows them.
 title: Make a vertical hook clip
 needs_shell: false
 ---
@@ -12,29 +12,37 @@ something already happening in frame one, no slow build-up. Usually two or three
 opening, so the user can test which one holds people. Optionally a loop. Read
 [the tool cheat sheet](../_shared/luma-tools.md) first.
 
-## 1. Ask first, in one message
+## 1. Ask only for what is missing, in one message
+
+Ask only for what the brief leaves out and you cannot choose yourself: what the clip is for, when
+the brief does not say, and the photo, when the brief mentions one you do not have. For everything
+else, pick a default, state your picks in one line with the plan, and go ahead.
 
 - **What the clip is for**: the product, the message or the account, and where it will run.
-- **The hook**: the one thing that must happen in the first second. If they do not have one,
-  offer three and let them pick.
-- **The starting point**: an idea only; a photo (a direct https link to the image file, or a file
-  path when you have a shell; Luma cannot read a file attached to the chat); or one of their Luma
-  pictures, such as a still from the `character-sheet` or `product-clip` workflows.
+- **The hook**: the one thing that must happen in the first second. From the brief; when it gives
+  none, write one per variant yourself, each a different first second.
+- **The starting point**: an idea only (the default); a photo (a direct https link to the image
+  file, or a file path when you have a shell; Luma cannot read a file attached to the chat); or one
+  of their Luma pictures, such as a still from the `character-sheet` or `product-clip` workflows.
 - **Sound**: sound made with the clip, or silent with a sound added in the posting app (often what
-  creators want, since the app offers its own library).
-- **Loop or not.** Say that the loop is an experiment (section 5).
-- **Words on screen**, if any. They go on in the edit or the app, not in the generated picture.
-- **How many variants**: default two or three.
+  creators want, since the app offers its own library). Silent, unless the brief asks for sound;
+  say in one line that a version with sound can be made.
+- **Loop or not**: only when the brief asks for one. Say that the loop is an experiment
+  (section 5).
+- **Words on screen**, if the brief gives any. They go on in the edit or the app, not in the
+  generated picture.
+- **How many variants**: the number the brief gives, otherwise two, so the user can test which
+  opening holds people.
 
 ## 2. Find the vertical shape in the catalog
 
-Never type a ratio from memory. `get_account` (balance, consent), then `list_models` for
+Never type a ratio from memory. `get_account` (consent), then `list_models` for
 `text-to-image` (for a still), `text-to-video` (for a clip from words), and `image-to-video` and
 `frames` (models and durations for clips made from stills).
 
 - In a row's `aspect_ratios`, read each value as width:height and take the portrait one (height
-  greater than width). If a row lists more than one, full-screen phone feeds want the tallest; ask
-  when unsure. Use that exact string as `aspect_ratio`.
+  greater than width). If a row lists more than one, full-screen phone feeds want the tallest; use
+  it unless the brief says where else the clip runs. Use that exact string as `aspect_ratio`.
 - A model whose row lists no portrait value cannot make this clip from words; pick another model,
   or go through a still.
 - **Image and frames modes take no `aspect_ratio`**: the clip takes the shape of its picture. So
@@ -55,8 +63,8 @@ Luma").
 - **A photo in the wrong shape**: `generate_image` `mode: "edit"` with the portrait `aspect_ratio`
   and "The same <subject>, unchanged. The whole subject in frame, with space above and below."
   Check it did not cut off or change the subject. Take the value from the `image-edit` row, or the
-  `text-to-image` row when that one lists none; `estimate_cost` does not check shapes, so an
-  unlisted value can fail only after the call starts, as a provider refusal that returns the credits.
+  `text-to-image` row when that one lists none. The rows are the only check on a shape: an
+  unlisted value fails only after the call starts, as a provider refusal that returns the credits.
 - **Route A's still is the first frame**, so make it the hook itself: the moment of most tension or
   surprise, not the calm before it. Say where the subject sits, such as "the loaf centred in the
   frame, its top at the middle of the picture, empty space above". Then look at the still with the
@@ -87,11 +95,14 @@ next>. <Camera: fast push-in, whip pan, handheld close-up>. <The payoff, before 
 
 > Tried once in testing: a still used as both frames of a `frames` clip, with a camera orbit and
 > rising steam, gave a clip that moved, ended on its first frame and wrapped with no visible jump.
-> One sample, so keep it an experiment: quote it on its own line, check the seam every time, and
-> keep the fallback ready. It costs more than an ordinary clip of the same length.
+> One sample, so keep it an experiment: name it as one in the plan line, check the seam every
+> time, and keep the fallback ready.
 
-With a shell, the mirror loop in the fallback below is free and has no seam by construction, so
-offer it beside the experiment and let the user choose.
+Pick the loop from the planned motion and the shell. With a shell, the mirror loop in the
+fallback below needs nothing beyond the route A clip and has no seam by construction: choose it
+when the motion is camera-led (a push, a drift, slow ambient movement). Choose the `frames` loop
+when the motion has a visible cause and effect, which reads as a rewind when mirrored, or when
+there is no shell. Name the choice in the plan line.
 
 - **The call**: `generate_video` `mode: "frames"` with the vertical still as both `start_image` and
   `end_image`, and motion that leaves and comes back: "The camera drifts around her and returns to
@@ -105,26 +116,26 @@ offer it beside the experiment and let the user choose.
 - **A loop is its own file.** Never join it to other clips; the join would put a cut in it.
 - **Fallback when the clip barely moves, the seam jumps, or the call is refused** (a provider
   refusal returns the credits):
-  1. **With a shell, a mirror loop, free**: the best route A clip forward, then backward
-     ([hook edit H3](references/hook-edit.md)). It suits a camera push or drift and slow ambient
+  1. **With a shell, a mirror loop, no new generation**: the best route A clip forward, then
+     backward ([hook edit H3](references/hook-edit.md)). It suits a camera push or drift and slow ambient
      motion. Anything with a visible cause and effect reads as a rewind (steam sinking back, a pour,
      a step, speech), so prefer the variant whose motion is camera-led, and watch the backward half
      before offering it.
   2. **No loop**: post the best variant; the app replays it with a visible cut.
 
-## 6. Plan and quote
+## 6. Plan in one line, then run
 
-1. Say the plan in one line: how many stills, how many clips, and the loop attempt if any.
-2. **Stills first** (routes A, C, D): one quote per still mode used, with the portrait
-   `aspect_ratio`: a text call, and an edit with the uploaded photo (or the first still, once made)
-   as `image`. On route A a variant with a different first second is its own still: two clips from
-   one still differ only after frame one, so quote a still for every variant. Multiply by the
-   stills, show it and ask for a yes.
-3. **Then the clips**, once the stills are approved: `estimate_cost` once per distinct call shape
-   with a real still's `generation_id` as input (image mode, frames with and without audio, the
-   loop). Route B has only this step.
-4. Show the count of each kind, the total and the balance. Say that each variant and each retake is
-   its own generation and its own charge. Wait for the user's yes.
+1. Say the plan in one line: the route, how many stills, how many clips, sound or silent, and the
+   loop attempt if any. Then run it. See Credits in the cheat sheet: the request is the go-ahead.
+2. **Stills first** (routes A, C, D), with the portrait `aspect_ratio`: a text call, or an edit
+   with the uploaded photo (or the first still, once made) as `image`. On route A a variant with a
+   different first second is its own still: two clips from one still differ only after frame one,
+   so make a still for every variant.
+3. **Check each still yourself** (section 3: the hook reads with the edges a feed hides covered,
+   the subject whole and unchanged), then go straight on to the clips from the stills that pass.
+   A still that fails is not animated: name it, say why, and offer a retake (a new key); make it
+   when the user asks.
+4. **Route B** has no stills: make the clips straight from the plan line.
 
 ## 7. Make it
 
@@ -158,9 +169,9 @@ generate_video {"mode": "frames", "start_image": {"generation_id": "<still v1>"}
 - **Without a shell**: list the variants, each with what its opening does, `media_url` and
   `generation_id`, which one to post first, and the words and sound to add in the app. Say the
   links expire in an hour and `list_generations` finds them later.
-- Next steps, each a new job with its own quote and key: extend the winner (`generate_video`
-  `mode: "extend"`; it takes no `aspect_ratio`, so check the result is still vertical), another
-  opening, a restyle (`restyle`).
+- Next steps, each a new job with a new key, made when the user asks: extend the winner
+  (`generate_video` `mode: "extend"`; it takes no `aspect_ratio`, so check the result is still
+  vertical), another opening, a restyle (`restyle`).
 
 ## When something goes wrong
 
@@ -168,11 +179,15 @@ generate_video {"mode": "frames", "start_image": {"generation_id": "<still v1>"}
   the shape. New key.
 - **No portrait value in any text-to-video row**: go through a still (route A).
 - **Audio refused without a model**: pass the model the message names.
-- **The loop call was refused or came back wrong**: use the fallback in section 5. A refusal
-  returned the credits; a finished clip that does not loop was charged, so say so before retrying.
+- **The loop call was refused or came back wrong**: use the fallback in section 5. A finished clip
+  that does not loop is still a clip: show it beside the fallback, and make another loop attempt
+  when the user asks.
 - **Moderation refused a prompt or a photo**: final for that input. Tell the user; do not reword
   to get around it.
-- **A clip failed**: show `error.message` and `refunded`; a retry is a new job, quoted, new key.
+- **A clip failed**: read `error.message`, `retryable` and `refunded`. When `retryable` is true, run
+  it once more as a new job with a new key, and tell the user only if that one fails too.
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key.
-- **Not enough credits**: stop, show the account link from the refusal, offer fewer variants.
+- **Not enough credits**: stop and do not retry. Hand over what is made so far (ids and links),
+  say once that the balance does not cover the rest, show the account link from the refusal, say
+  which stills and clips are left to make, and offer fewer variants.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

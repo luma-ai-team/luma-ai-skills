@@ -46,7 +46,7 @@ reads as landscape when it looks portrait. Read the upright size with
 Luma applies the flag itself, and ffmpeg 8 does too when it scales a photo (an older build may
 show it sideways in a contact sheet).
 
-## 3. Contact sheets (check before you cut, and before you spend)
+## 3. Contact sheets (check before you cut, and before you animate)
 
 Scale every picture to one cell first, then tile the cells. Tiling pictures of different sizes
 directly makes ffmpeg drop tiles without a message, and Luma's tools make slightly different sizes.
@@ -282,7 +282,8 @@ ffmpeg -loglevel error -y -loop 1 -t 5 -i title_end.png -ss 2.5 -i c07.mp4 \
   -map "[v]" -map "[a]" -c:v libx264 -preset medium -crf 17 -c:a aac -b:a 192k -t 5 c99.mp4
 ```
 
-Ask the user what the title and end card should say; do not add a credit line they did not ask for.
+Use the words the user gave for the title and end card, or the ones you chose and named in the
+plan; do not add a credit line they did not ask for.
 
 ## 9a. Join with crossfades, and set the loudness
 

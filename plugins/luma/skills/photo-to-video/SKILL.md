@@ -1,6 +1,6 @@
 ---
 name: photo-to-video
-description: Use when the user has one photo and wants it to move, such as "bring this photo to life", "animate my picture" or "turn this photo into a video". Offers the Luma effects that fit it plus a plain animation, quotes each, runs the ones they pick and shows the results.
+description: Use when the user has one photo and wants it to move, such as "bring this photo to life", "animate my picture" or "turn this photo into a video". Picks Luma effects that fit it plus a plain animation, makes them and shows the results side by side.
 title: Bring a photo to life
 needs_shell: false
 ---
@@ -8,18 +8,24 @@ needs_shell: false
 # Bring a photo to life
 
 One photo in; a few short clips out, side by side: two or three ready-made effects that suit the
-photo, and one plain animation that keeps the photo's framing and adds gentle motion. Every option
-is quoted before it runs. Read [the tool cheat sheet](../_shared/luma-tools.md) first.
+photo, and one plain animation that keeps the photo's framing and adds gentle motion. Read
+[the tool cheat sheet](../_shared/luma-tools.md) first.
 
-## 1. Ask first, in one message
+## 1. Ask only for what is missing, in one message
+
+The photo is the one thing only the user can give. Ask for it when the brief has no way to reach
+it; for everything else, pick a default, state your picks in one line, and go ahead.
 
 - **The photo, and how it reaches Luma.** Luma cannot read a file attached to the chat. Ask for one
   of: a direct https link to the image file (works in every client), the path of a file on this
   computer (only when you have a shell), or one of their Luma pictures. If they attached a photo,
   say plainly that you cannot pass it to Luma from the chat, and ask for a link or a path.
-- **The feel** they want: playful, cinematic, a dance, a greeting, something magical.
-- **How many options**: default two effects and one plain animation.
-- **Rights**: the photo is theirs, or they have the right to use it, and anyone in it agreed.
+- **The feel**: playful, cinematic, a dance, a greeting, something magical. From the brief,
+  otherwise what suits the photo.
+- **How many options**: the number the brief gives, otherwise two effects and one plain
+  animation, the side-by-side set this workflow makes.
+- **Rights**: the photo must be theirs, or one they have the right to use, and anyone in it must
+  have agreed. Say so in one line.
 
 Sound: say up front that an effect may come with its own soundtrack and the plain animation is
 silent.
@@ -49,12 +55,12 @@ what is in it in one line.
    an animal, open the pet category and also try `query: "pet"`. Read a page of results.
 3. Keep effects whose `input_count` is 1. An effect that takes two photos needs a second photo;
    offer one only when the user has it.
-4. Choose two or three that match the subject and the feel. An effect built around a full body
-   needs a photo that shows one; a close-up face suits a close-up effect.
-5. Show each with its name, its `credits`, one line on why it fits this photo, and its
-   `preview_url`, so the user sees the price and a sample before anything is spent. With a shell,
-   download the previews and look at them on one contact sheet
-   ([ffmpeg step 3](../short-film/references/ffmpeg.md)) before recommending any.
+4. Choose the effects that match the subject and the feel; when the brief names an effect, take
+   that one. An effect built around a full body needs a photo that shows one; a close-up face
+   suits a close-up effect.
+5. Judge each by its `preview_url`, a free sample of what it does. With a shell, download the
+   previews and look at them on one contact sheet
+   ([ffmpeg step 3](../short-film/references/ffmpeg.md)) before choosing.
 
 An effect sets its own shape and framing (some add black bars), so an effect clip can differ from
 the photo's shape; its `preview_url` shows what to expect. Only the plain animation keeps the
@@ -68,16 +74,13 @@ Describe motion only; the photo already fixes who and where. Take `model` and `d
 `image-to-video` row of `list_models` (the default model unless the user wants the best quality).
 The clip keeps the photo's shape and has no sound.
 
-## 5. Quote and confirm
+## 5. Plan in one line, then run
 
-- `get_account` (balance, consent).
-- `estimate_cost` for each chosen effect:
-  `{"tool": "apply_template", "kind": "effect", "key": "<key>", "images": [<the photo>]}`.
-- `estimate_cost` for the plain animation with exactly its generate arguments.
-- Show one short list: each option and its price, the total, the number of generations and the
-  balance. Let the user drop options, then ask for a yes.
-- A clean quote does not promise an effect will run. Start one effect first and confirm it
-  completes before starting the rest.
+- `get_account` (consent).
+- Say the plan in one line: each effect by name, with a few words on why it fits this photo, and
+  the plain animation. Then run it. See Credits in the cheat sheet: the request is the go-ahead.
+- An effect being listed does not promise it will run on this photo. Start one effect first and
+  check it completes before starting the rest.
 
 ## 6. Run
 
@@ -97,9 +100,9 @@ Start them in batches of about five, then poll each with `get_generation` (`wait
 
 - List the clips in the order you offered them, each with its name and `media_url`, so the user
   can compare. Links last one hour.
-- Ask which they like, and offer next steps, each a new job with its own quote and key: another
-  effect, the plain animation again with different motion, an extend of a clip (new seconds; any
-  generated sound covers only those seconds), or a restyle (the `restyle` workflow).
+- Ask which they like, and offer next steps, each a new job with a new key, made when the user
+  asks: another effect, the plain animation again with different motion, an extend of a clip (new
+  seconds; any generated sound covers only those seconds), or a restyle (the `restyle` workflow).
 - **With a shell**: offer to download the clips into one folder. To join the favourites into a
   single preview, use a new folder holding only them, as `s01.mp4`, `s02.mp4` in the order
   offered, and follow [the ffmpeg reference](../short-film/references/ffmpeg.md): step 4 with `R`
@@ -120,13 +123,16 @@ Start them in batches of about five, then poll each with `get_generation` (`wait
 - **"this effect takes N photos"**: pick a one-photo effect, or ask for the other photos.
 - **Moderation refused the image**: it is final for this photo. Tell the user; do not crop, edit or
   reword to get it through.
-- **An effect or animation failed**: show `error.message` and whether it was `refunded`; a retry is
-  a new job, quoted, with a new key.
+- **An effect or animation failed**: read `error.message`, `retryable` and `refunded`. When
+  `retryable` is true, run it once more as a new job with a new key (except the case below), and
+  tell the user only if that one fails too. Otherwise show the error and whether it was `refunded`.
 - **An effect that fails on its first poll with "The generator failed on this one"** will most
   likely fail again, whatever `retryable` says. Do not retry the same effect; offer a different
   one, once. If two different effects fail this way in a row, stop, tell the user which worked and
   which did not, and deliver what you have.
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key, and
   start fewer jobs at once.
-- **Not enough credits**: stop, show the account link from the refusal, offer fewer variants.
+- **Not enough credits**: stop and do not retry. Hand over the clips made so far (ids and links),
+  say once that the balance does not cover the rest, show the account link from the refusal, say
+  which options are left to make, and offer fewer.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

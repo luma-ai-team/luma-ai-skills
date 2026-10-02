@@ -58,7 +58,7 @@ instead.
 ## R3. A photo that should not move
 
 When a clip warped a face, or the user wants one photo kept exactly as it is, turn the photo
-itself into a clip with a slow zoom. It costs nothing and changes nothing in the picture. Download
+itself into a clip with a slow zoom. It needs no generation and changes nothing in the picture. Download
 the photo first (`curl -sSL -o p04.jpg "<link>"`, or the file the user gave; on a Mac, convert a
 HEIC photo with `sips -s format jpeg p04.heic --out p04.jpg`).
 

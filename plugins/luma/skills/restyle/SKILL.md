@@ -1,6 +1,6 @@
 ---
 name: restyle
-description: Use when the user wants a photo, or one of their own Luma videos, redrawn in a different look such as anime, watercolour, clay or film noir, and wants to compare a few looks. Finds matching Luma styles, quotes each variant, runs them and shows them side by side.
+description: Use when the user wants a photo, or one of their own Luma videos, redrawn in a different look such as anime, watercolour, clay or film noir, and wants to compare a few looks. Finds matching Luma styles, makes each variant and shows them side by side.
 title: Restyle a photo or video
 needs_shell: false
 ---
@@ -12,37 +12,41 @@ shown side by side so the user can pick. The looks are ready-made styles from Lu
 photo, a look described in words is a second route. Read [the tool cheat sheet](../_shared/luma-tools.md)
 first.
 
-## Two inputs, three routes, two kinds of price
+## Two inputs, three routes
 
-| Input | Call | Priced |
-|---|---|---|
-| A photo, a ready-made style | `generate_image` `mode: "style"` with `image` and `style` | per picture |
-| A photo, a look written in words | `generate_image` `mode: "edit"` with `image` and `prompt` | per picture |
-| One of their Luma videos, a ready-made style | `apply_template` `kind: "style"` with `key`, `video`, optional `tier` | per second of the source video, by tier |
+| Input | Call |
+|---|---|
+| A photo, a ready-made style | `generate_image` `mode: "style"` with `image` and `style` |
+| A photo, a look written in words | `generate_image` `mode: "edit"` with `image` and `prompt` |
+| One of their Luma videos, a ready-made style | `apply_template` `kind: "style"` with `key`, `video`, optional `tier` |
 
 - **One style catalog serves both.** `list_templates` `{"kind": "style"}` lists each style once; its
   `key` goes in `style` for a photo and in `key` for a video.
-- **A style's `credits` in `list_templates` is the video price** per unit of `per` (`credits` for
-  the `"fast"` tier, `credits_max` for `"max"`). It does not price a photo. Every number you tell
-  the user comes from `estimate_cost`.
+- **A style's `credits` in `list_templates` is the video restyle's price** (`credits` for the
+  `"fast"` tier, `credits_max` for `"max"`), never a photo's. When the user asks what a look
+  costs, `estimate_cost` answers for either.
 - **A video must be one of the user's own finished Luma video generations.** An uploaded or linked
-  video cannot be restyled; say so up front if they mention one. It is priced per second of the
-  source, so a longer clip costs more. Check the result's length and sound; do not promise either.
+  video cannot be restyled; say so up front if they mention one. Check the result's length and
+  sound; do not promise either.
 - A style takes no prompt: the template is the prompt. An edit takes a prompt and no style.
 
-## 1. Ask first, in one message
+## 1. Ask only for what is missing, in one message
+
+What to restyle is the one thing only the user can give. Ask for it when the brief does not say;
+for everything else, pick a default, state your picks in one line, and go ahead.
 
 - **What to restyle.** A photo: a direct https link to the image file, the path of a file on this
   computer (only with a shell), or one of their Luma pictures. Luma cannot read a file attached to
   the chat; if they attached one, say so and ask for a link or a path. A video: which of their
   Luma videos.
-- **The looks** they want to compare, in their words ("anime", "oil painting", "1950s noir"), or
-  "show me some".
-- **How many variants**: default three for a photo. A video look is priced per second of the clip,
-  once per look, many times the price of a picture: for a video, ask for a spending limit and plan
-  to try the looks on a still first (step 4).
-- **For a video, the tier**: `"fast"` (default) for comparing, `"max"` for the final.
-- **Rights**: the photo is theirs or they may use it, and anyone in it agreed.
+- **The looks** to compare, in their words ("anime", "oil painting", "1950s noir"), from the brief.
+  When the brief names none, see step 3.
+- **How many variants**: one per look the brief names; otherwise three for a photo, and for a video
+  the one or two looks the user picks in step 3.
+- **For a video, the tier**: `"fast"` (default) for comparing, `"max"` when the brief asks for the
+  best quality or the final version.
+- **Rights**: the photo must be theirs or one they may use, and anyone in it must have agreed. Say
+  so in one line.
 
 ## 2. Bring the input in
 
@@ -63,12 +67,13 @@ first.
 2. `query` matches only a style's name or key: "clay" finds a clay style, while "hand-drawn",
    "cartoon" or "poster" can find nothing. Use it for a word likely in a name, and try both
    spellings of words like watercolor and watercolour.
-3. Pick three to five that match and show each with its name and `preview_url` (`preview_kind` says
-   whether the sample is a picture or a clip). Previews are free. A look is not always safe for the
+3. Find three to five that match, by name and `preview_url` (`preview_kind` says whether the
+   sample is a picture or a clip). Previews are free samples. A look is not always safe for the
    subject: styles built around faces can invent a face on an object (one gave a mug eyes and
    arms), comic looks can add sound-effect lettering and a panel border, and line-art looks drop
-   colour. Say what each is likely to add, and for a product or an object see the still first.
-4. **For a photo, when no style fits** a look the user named, offer the edit route with the look
+   colour. Say what each is likely to add; a product or an object shows it most, so check those
+   results closely.
+4. **For a photo, when no style fits** a look the user named, use the edit route with the look
    written out: "Redraw this picture as <medium and look: a watercolour painting on textured paper,
    soft washes, visible brush edges>. Keep the same composition, the same people with the same
    faces and poses, and the same <key details>." Describe the medium, palette, era and light.
@@ -77,13 +82,15 @@ first.
    end the prompt with "No text, no lettering, no captions and no signs anywhere in the picture."
    Do not say "hand-lettered", which asks for lettering. If the user wants words, suggest adding
    them in an editor afterwards.
-5. The user picks the variants.
+5. **Choose the variants.** Looks the brief names: use them. For a photo with none named, choose
+   three that suit the subject and name them in the plan line. For a video with none named, show
+   the user three to five with their name and `preview_url` and let them pick one or two: a choice
+   of look only they can make.
 
-## 4. For a video: try the looks on a still first
+## 4. For a video: the looks on a still, when the user asks
 
-A video restyle is priced per second, once per look, and a still costs the price of one picture.
-Unless the user has already fixed exactly one look, restyle one still in each candidate look first
-(quote them, get the yes), then restyle the video only in the one or two looks the user picks:
+When the user wants to see the looks on their own clip before picking, restyle one still in each
+candidate look, show them, then restyle the video in the one or two looks the user picks:
 
 - If the video was animated from one of their pictures (its `feature` in `list_generations` is
   `image-to-video`), restyle that picture with `generate_image` `mode: "style"`. The listing does
@@ -93,30 +100,20 @@ Unless the user has already fixed exactly one look, restyle one still in each ca
 - Otherwise, with a shell: download the video, take a frame
   (`ffmpeg -loglevel error -ss 1 -i source.mp4 -frames:v 1 -q:v 2 frame.jpg`), upload it with
   `action: "start"`, and restyle the frame.
-- Without a shell, and when the video was not animated from one of their pictures, skip the still
-  test and quote the video variants.
+- Without a shell, and when the video was not animated from one of their pictures, there is no
+  still to restyle: say so, and let the previews guide the pick.
 
-Say that a still shows the look, not the motion, and that the video result can differ. Quote the
-stills with the price of one video look beside them, so the user sees both, and ask for a yes on
-the stills alone; the video looks get their own quote once the user has picked.
+Say that a still shows the look, not the motion, and that the video result can differ.
 
-## 5. Quote and confirm
+## 5. Plan in one line
 
-`get_account` (balance, consent). Then `estimate_cost` once per variant, with exactly the arguments
-the call will take:
+`get_account` (consent). Say the plan in one line: the input, each look by name, and for a video
+the tier. Then run it. See Credits in the cheat sheet: the request is the go-ahead.
 
-```
-estimate_cost {"tool": "generate_image", "mode": "style", "image": {"upload_id": "<id>"}, "style": "<key>"}
-estimate_cost {"tool": "generate_image", "mode": "edit", "image": {"upload_id": "<id>"}, "prompt": "Redraw this picture as ..."}
-estimate_cost {"tool": "apply_template", "kind": "style", "key": "<key>", "video": {"generation_id": "<id>"}, "tier": "fast"}
-```
-
-For a video, `priced_seconds` in the answer is the source's length. The quote refuses, for free, a
-video whose length Luma does not know and a clip outside the length or size the catalog accepts
-for a restyle; say which limit it named and pick another clip with the user. A clip the provider
-still cannot take is refused only once the restyle starts, and those credits come back. Show one short list: each variant and its price, the
-total, the number of generations and the balance. Say that a retake, or the max tier later, is a
-new generation with its own price. Wait for the user's yes.
+`apply_template` refuses a video whose length Luma does not know, and a clip outside the length or
+size the catalog accepts for a restyle, before anything is charged; say which limit it named and
+pick another clip with the user. A clip the provider still cannot take is refused only once the
+restyle starts, and those credits come back.
 
 ## 6. Run
 
@@ -165,9 +162,9 @@ ffmpeg -loglevel error -y -i original.mp4 -i style-a.mp4 -i style-b.mp4 -filter_
   -map "[v]" -an -c:v libx264 -crf 20 compare.mp4
 ```
 
-- Next steps, each a new job with its own quote and key: the favourite in the `"max"` tier, the same
-  look on more photos or clips, animate a restyled photo (`generate_video` `mode: "image"`, or the
-  `photo-to-video` workflow).
+- Next steps, each a new job with a new key, made when the user asks: the favourite in the
+  `"max"` tier, the same look on more photos or clips, animate a restyled photo (`generate_video`
+  `mode: "image"`, or the `photo-to-video` workflow).
 
 ## When something goes wrong
 
@@ -182,8 +179,11 @@ ffmpeg -loglevel error -y -i original.mp4 -i style-a.mp4 -i style-b.mp4 -filter_
   pick an available style.
 - **Moderation refused a photo or the edit prompt**: final for that input. Tell the user; do not
   reword or crop to get it through.
-- **A variant failed**: show `error.message` and `refunded`; a retry is a new job, quoted, new key.
+- **A variant failed**: read `error.message`, `retryable` and `refunded`. When `retryable` is true,
+  run it once more as a new job with a new key, and tell the user only if that one fails too.
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key, and
   start fewer variants at once.
-- **Not enough credits**: stop, show the account link from the refusal, offer fewer variants.
+- **Not enough credits**: stop and do not retry. Hand over the variants made so far (ids and
+  links), say once that the balance does not cover the rest, show the account link from the
+  refusal, say which looks are left to make, and offer fewer variants (or the `"fast"` tier).
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).
