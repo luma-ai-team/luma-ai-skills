@@ -5,15 +5,15 @@
     "url": "https://luma.ai"
   },
   "metadata": {
-    "description": "Luma AI is the image and video creation service at luma.ai, operated by Luma AI Ltd. Create images, videos, product clips and short films with your connected Luma account and ten creative workflows.",
-    "version": "0.4.1"
+    "description": "Create and edit images and videos with your Luma account at luma.ai. Ten creative workflows guide product clips, photo animation and short films.",
+    "version": "0.4.2"
   },
   "plugins": [
     {
       "name": "luma",
       "source": "./plugins/luma",
       "description": "Connects the Luma MCP and adds ten workflows: a base generator, short film, photo to video, restyle, memory reel, vertical hook, character sheet, product clip, talking ad and every feed",
-      "version": "0.4.1",
+      "version": "0.4.2",
       "category": "creative",
       "tags": [
         "luma",
