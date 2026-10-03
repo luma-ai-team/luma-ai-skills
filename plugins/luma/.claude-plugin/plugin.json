@@ -1,12 +1,19 @@
 {
   "name": "luma",
-  "description": "Make product clips, talking ads, social hooks and short films with your Luma AI account from Claude Code. Connects the Luma MCP over OAuth and adds ten workflows, with captions, music and sound for the finish.",
-  "version": "0.3.0",
+  "description": "Create images, videos, product clips and short films with your Luma AI account. Includes ten creative workflows and an OAuth connection to Luma.",
+  "version": "0.4.0",
   "author": {
     "name": "Luma AI Ltd",
     "url": "https://luma.ai"
   },
   "homepage": "https://luma.ai/mcp",
-  "keywords": ["luma", "mcp", "video", "image", "generation", "creator"],
+  "keywords": [
+    "luma",
+    "mcp",
+    "video",
+    "image",
+    "generation",
+    "creator"
+  ],
   "license": "MIT"
 }

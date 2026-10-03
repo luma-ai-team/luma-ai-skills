@@ -1,17 +1,40 @@
-# Luma AI skills for Claude Code
+# Luma AI plugin for ChatGPT, Codex and Claude Code
 
 Ten workflows for making pictures, clips, ads and short films with your own Luma AI account, from
-inside Claude Code: product clips and talking ads for a shop, hooks and every-feed copies for social
-media, and the finish that makes them postable (captions, music under the voice, sound, loudness).
+inside a connected AI client: product clips and talking ads for a shop, hooks and every-feed copies
+for social media, and the finish that makes them postable (captions, music under the voice, sound,
+loudness).
 
 This is for Luma AI, at [luma.ai](https://luma.ai). Luma Labs and Dream Machine are different
 products, and this plugin does not connect to them.
 
-The plugin does two things. It connects Claude Code to the Luma MCP at `https://luma.ai/api/mcp`,
+The plugin does two things. It connects your client to the Luma MCP at `https://luma.ai/api/mcp`,
 and it adds one skill per workflow. Each skill fixes the order Claude works in: ask only what is
 missing, say the plan in one line, make it, check it, and show you the result.
 
-## Install
+## ChatGPT
+
+The OpenAI package is prepared for directory submission. It is not yet an approved, published
+ChatGPT plugin. Until publication, use the [ChatGPT connection guide](https://luma.ai/mcp?tab=chatgpt)
+if your account supports custom MCP connections in Developer mode.
+
+Package and review preparation are documented in [OpenAI submission](docs/openai-submission.md).
+
+## Codex
+
+Register this repository marketplace and install Luma in Codex:
+
+```sh
+codex plugin marketplace add luma-ai-team/luma-ai-skills
+codex plugin add luma@luma-ai
+```
+
+After the marketplace is registered, the native install link is
+`codex://plugins/install/luma?marketplace=luma-ai`. It depends on that marketplace already being
+known to Codex. It is not a universal install link for an unconfigured client.
+Installation requests Luma authentication: sign in to your own account and approve the connection.
+
+## Claude Code
 
 ```
 /plugin marketplace add luma-ai-team/luma-ai-skills
@@ -23,25 +46,25 @@ no server address to paste and no token to copy.
 
 ## What connecting does
 
-Run `/mcp`, pick `luma-ai` and choose Authenticate. A browser opens, you sign in to your own Luma
-account and approve the connection. You do this once.
+In Claude Code, run `/mcp`, pick `luma-ai` and choose Authenticate. Codex requests authentication
+when you install the plugin. A browser opens so you can sign in to your own Luma account and
+approve the connection. ChatGPT custom connections use the steps in the connection guide above.
 
-Everything Claude generates spends credits from that account, at the same prices as on luma.ai.
-Nothing is free over MCP. Your request is the go-ahead: Claude makes what you ask for right away and
-does not report credits after each generation. Ask what something costs or what you have left at any
-time, and Claude checks with Luma. If the balance runs short, Claude says so once and gives you the
-link to your account page. Claude Code still asks your permission before it runs a Luma tool, unless
-you allow it. Prices, lengths, shapes and models come from Luma's catalog when the workflow runs, so
-this page names none of them.
+Everything generated spends credits from that account, at the same prices as on luma.ai.
+Your request authorizes the requested generation. Ask what something costs or what you have left,
+and the assistant checks with Luma. If the balance runs short, it explains the problem. Your
+client's tool permission settings still apply. Prices, lengths, shapes and models come from Luma's
+catalog when the workflow runs.
 
 Use photos, footage, faces and voices you own or have the right to use. Luma's content policy
 applies, and the tools enforce it.
 
 ## The ten workflows
 
-Type a command, or describe what you want and Claude picks the workflow.
+Describe what you want and the assistant picks the workflow. The commands below are Claude Code
+shortcuts; other clients expose workflows through their skill or plugin controls.
 
-| Command | What it does |
+| Claude Code command | What it does |
 |---|---|
 | `/luma:generate` | Make anything with Luma. Picks the tool, mode and settings for your brief, runs it, and hands off to a more specific workflow when one fits. |
 | `/luma:short-film` | Make a short film. Script, shot list, matching stills, one animated clip per shot, then one cut with titles and sound. |
