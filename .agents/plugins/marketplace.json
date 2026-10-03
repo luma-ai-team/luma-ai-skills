@@ -1,0 +1,20 @@
+{
+  "name": "luma-ai",
+  "interface": {
+    "displayName": "Luma AI"
+  },
+  "plugins": [
+    {
+      "name": "luma",
+      "source": {
+        "source": "local",
+        "path": "./plugins/luma"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Creativity"
+    }
+  ]
+}

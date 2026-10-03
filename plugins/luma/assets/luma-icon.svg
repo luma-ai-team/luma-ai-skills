@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">Luma</title>
+  <desc id="desc">A black four-point Luma mark on a white rounded square</desc>
+  <rect x="1" y="1" width="62" height="62" rx="13" fill="#ffffff" stroke="#292929" stroke-width="2"/>
+  <g transform="translate(-18.67 5.50) scale(3.3333)"><g transform="translate(9.226 2.028) scale(0.999824 0.999994)"><path d="M10.0736 4.88614C8.58333 4.60926 7.30479 3.34701 7.0279 1.86488V0H4.91872V1.86488C4.64184 3.34701 3.37144 4.61741 1.87302 4.88614H0V6.97904H1.87302C3.3633 7.25593 4.64184 8.51818 4.91872 10.0003V11.8652H7.0279V10.0003C7.30479 8.51818 8.57519 7.24778 10.0736 6.97904H11.9466V4.88614H10.0736Z" fill="#111111"/></g></g>
+</svg>
