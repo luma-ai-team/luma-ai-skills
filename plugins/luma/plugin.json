@@ -106,7 +106,7 @@
         "commerce_description": "The plugin does not sell products or process payments. Generation uses the connected Luma account's existing credits."
       },
       "publication": {
-        "release_notes": "Initial OpenAI distribution package with ten creative workflows and the Luma OAuth connection. This revision clarifies the publisher and service domain. Reviewer tests and recording must be completed before submission."
+        "release_notes": "Initial OpenAI distribution package with ten creative workflows and the Luma OAuth connection. This revision clarifies the publisher and service domain."
       }
     }
   }
