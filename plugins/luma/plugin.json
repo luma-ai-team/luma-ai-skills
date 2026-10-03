@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "luma",
-  "version": "0.4.0",
-  "description": "Create images, videos, product clips and short films with your Luma AI account. Includes ten creative workflows and an OAuth connection to Luma.",
+  "version": "0.4.1",
+  "description": "Luma AI is the image and video creation service at luma.ai, operated by Luma AI Ltd. Create images, videos, product clips and short films with your connected Luma account and ten creative workflows.",
   "author": {
     "name": "Luma AI Ltd",
     "url": "https://luma.ai"
@@ -23,7 +23,7 @@
       "interface": {
         "displayName": "Luma AI",
         "shortDescription": "Create images and videos",
-        "longDescription": "Create images and videos from a brief, animate photos, apply effects, edit videos and make lip-sync clips with your connected Luma AI account. Ten workflows guide product clips, social hooks, character sheets, talking ads, memory reels and short films. Check available models and estimate a generation before starting. Results appear in chat when the client supports the Luma player, with media links as a fallback. Generation uses your Luma account credits. Workflows that assemble clips locally need a shell and ffmpeg; clients without them receive the individual clips and editing guidance. Use only media, faces and voices you have permission to use. Luma content rules apply.",
+        "longDescription": "Luma AI is the image and video creation service at luma.ai, operated by Luma AI Ltd. Create images and videos from a brief, animate photos, apply effects, edit videos and make lip-sync clips with your connected Luma AI account. Ten workflows guide product clips, social hooks, character sheets, talking ads, memory reels and short films. Check available models and estimate a generation before starting. Results appear in chat when the client supports the Luma player, with media links as a fallback. Generation uses your Luma account credits. Workflows that assemble clips locally need a shell and ffmpeg; clients without them receive the individual clips and editing guidance. Use only media, faces and voices you have permission to use. Luma content rules apply.",
         "developerName": "Luma AI Ltd",
         "category": "Creativity",
         "capabilities": [
@@ -104,6 +104,9 @@
         },
         "commerce": false,
         "commerce_description": "The plugin does not sell products or process payments. Generation uses the connected Luma account's existing credits."
+      },
+      "publication": {
+        "release_notes": "Initial OpenAI distribution package with ten creative workflows and the Luma OAuth connection. This revision clarifies the publisher and service domain."
       }
     }
   }

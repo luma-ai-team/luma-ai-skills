@@ -1,7 +1,7 @@
 {
   "name": "luma",
-  "description": "Create images, videos, product clips and short films with your Luma AI account. Includes ten creative workflows and an OAuth connection to Luma.",
-  "version": "0.4.0",
+  "description": "Luma AI is the image and video creation service at luma.ai, operated by Luma AI Ltd. Create images, videos, product clips and short films with your connected Luma account and ten creative workflows.",
+  "version": "0.4.1",
   "author": {
     "name": "Luma AI Ltd",
     "url": "https://luma.ai"
