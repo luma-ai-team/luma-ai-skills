@@ -17,7 +17,7 @@ video app. Read [the tool cheat sheet](../_shared/luma-tools.md) first.
 Run `ffmpeg -version` and `python3 -c "import PIL"`.
 
 - **ffmpeg present**: you will deliver one reel file, plus a smaller copy for phones.
-- **No shell or no ffmpeg** (claude.ai, the phone app): tell the user now that you will make one
+- **No shell or no ffmpeg**: tell the user now that you will make one
   clip per photo and hand them over in order with an edit plan, and that the joining, the music and
   the title happen in the app they edit or post with. Then carry on.
 

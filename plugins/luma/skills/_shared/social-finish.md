@@ -319,6 +319,6 @@ checks yourself, against the brief:
 - Every caption matches what is said, on time, inside the safe area.
 - The music is heard in the gaps and never covers a word.
 
-If you can start a helper with a fresh context (a subagent in Claude Code), give it the brief and
+If you can start a helper with a fresh context, give it the brief and
 the frames and let it find what is wrong before the user sees it. Report the files with their
 paths, sizes and what each one is for.

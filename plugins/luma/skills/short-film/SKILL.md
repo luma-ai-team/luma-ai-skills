@@ -17,7 +17,7 @@ from these tools, cut with ffmpeg. Read [the tool cheat sheet](../_shared/luma-t
 Run `ffmpeg -version` and `python3 -c "import PIL"`.
 
 - **ffmpeg present**: you will deliver one film file, plus a smaller copy for phones.
-- **No shell or no ffmpeg** (claude.ai, the phone app): tell the user now that you will make every
+- **No shell or no ffmpeg**: tell the user now that you will make every
   shot and hand over the shots in order with an edit list, and that joining them happens in a
   video editor on their side. Then carry on.
 
