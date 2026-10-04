@@ -27,7 +27,7 @@ saying it. The product shots are image-to-video clips. Read
 
 Check once for `ffmpeg -version`, `python3 -c "import PIL"` (the captions are rendered with
 Pillow) and `command -v whisper mlx_whisper` (word times for the captions and the cuts; without
-one, the script's own timing stands in, less exactly). Without a shell (claude.ai, the phone app), say now that you will make the talking clip
+one, the script's own timing stands in, less exactly). Without a shell, say now that you will make the talking clip
 and the product shots and hand over an edit list with the captions as an `.srt` text to paste into
 an editing app (CapCut, Instagram's editor), not one finished file.
 

@@ -284,8 +284,8 @@ a prompt or a photo will pass, and never coach around a refusal.
 
 ## With a shell, or without
 
-Joining clips, adding titles or music and exporting one file needs ffmpeg on the user's machine:
-Claude Code, or Claude Desktop with a shell. Check once with `ffmpeg -version`.
+Joining clips, adding titles or music and exporting one file needs ffmpeg on the user's machine
+and a client with shell access. Check once with `ffmpeg -version`.
 
 - **With ffmpeg**: download each `media_url` as soon as it is ready (`curl -sSL -o <file>
   "<media_url>"`, quoting the link), keep the files and a short manifest of ids in one project
@@ -293,6 +293,6 @@ Claude Code, or Claude Desktop with a shell. Check once with `ffmpeg -version`.
   JPEG) and clips as `.mp4`. For anything that will be posted or sold with, finish it with
   [the social finish](social-finish.md): the frame per platform, captions timed to the speech,
   music that drops under the voice, sound effects, one loudness and a check of every file.
-- **Without it** (claude.ai, the phone app): say so before starting, and finish with an ordered list:
+- **Without it**: say so before starting, and finish with an ordered list:
   position, what the clip is, its `generation_id`, its `media_url` (valid one hour), where to trim,
   the transition, and the sound to put under it. Never skip the assembly step silently.

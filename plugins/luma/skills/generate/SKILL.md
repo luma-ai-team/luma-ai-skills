@@ -15,7 +15,7 @@ before the first Luma call; this file assumes it.
 
 Check the brief against this table first. When one row fits, tell the user in one line which
 workflow you are switching to and why, then load it: through the Luma connector, call
-`get_workflow` with its name; in Claude Code, use the skill of the same name. If neither is
+`get_workflow` with its name; when local skills are available, use the skill of the same name. If neither is
 available, carry on here.
 
 | The user wants | Workflow |

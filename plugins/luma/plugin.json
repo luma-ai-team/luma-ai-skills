@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "luma",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Create and edit images and videos with your Luma account at luma.ai. Ten creative workflows guide product clips, photo animation and short films.",
   "author": {
     "name": "Luma AI Ltd",
@@ -107,7 +107,7 @@
         "demo_recording_url": "https://raw.githubusercontent.com/luma-ai-team/luma-ai-skills/main/docs/review/luma-mcp-review-20261003.mp4"
       },
       "publication": {
-        "release_notes": "Adds a recorded walkthrough of account, catalog, estimate and media-generation checks through the Luma MCP server, with separately labeled assistant decisions for negative prompts."
+        "release_notes": "Makes workflow instructions depend on available shell, local skills and helper capabilities so they work across compatible clients. The recorded MCP review walkthrough remains available."
       }
     }
   }
