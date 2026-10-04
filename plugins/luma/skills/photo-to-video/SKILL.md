@@ -78,7 +78,7 @@ The clip keeps the photo's shape and has no sound.
 
 - `get_account` (consent).
 - Say the plan in one line: each effect by name, with a few words on why it fits this photo, and
-  the plain animation. Then run it. See Credits in the cheat sheet: the request is the go-ahead.
+  the plain animation. Then run it. See "Credits and account status" in the cheat sheet.
 - An effect being listed does not promise it will run on this photo. Start one effect first and
   check it completes before starting the rest.
 
@@ -133,6 +133,6 @@ Start them in batches of about five, then poll each with `get_generation` (`wait
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key, and
   start fewer jobs at once.
 - **Not enough credits**: stop and do not retry. Hand over the clips made so far (ids and links),
-  say once that the balance does not cover the rest, show the account link from the refusal, say
+  say once that the balance does not cover the rest, say
   which options are left to make, and offer fewer.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

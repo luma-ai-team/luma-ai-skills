@@ -92,7 +92,7 @@ dropped session can resume.
 ## 6. One run, stills to shots
 
 The film runs straight through: the stills, your own check of them, then the shots, without
-stopping between. See Credits in the cheat sheet: the request is the go-ahead.
+stopping between. See "Credits and account status" in the cheat sheet.
 
 - Say the plan in one line: how many stills, how many shots of each mode, which carry sound, and
   any extends or style passes, which follow their source shot.
@@ -202,8 +202,7 @@ assemble it from this list.
   Never reword a prompt to get it past the check.
 - **A character drifts**: re-edit from the anchor, not from the drifted still.
 - **Credits run out midway** (`insufficient_credits`): stop and do not retry. Hand over what is
-  made (ids and links), say once that the balance does not cover the rest, give the account link
-  from the refusal, and list the stills and shots still to make. Offer a smaller film: fewer
+  made (ids and links), say once that the balance does not cover the rest, and list the stills and shots still to make. Offer a smaller film: fewer
   shots, fewer audio shots, the default models, or the user's own music instead of generated
   sound. Resume later from `shots.md` or `list_generations`.
 - **A session dropped**: `list_generations` (`kind: "image"` and `"video"`) and match the prompts to

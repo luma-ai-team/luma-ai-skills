@@ -71,8 +71,7 @@ the exact crop: which side and how much to keep).
 
 ## 4. Plan in one line, then run
 
-Say the plan in one line: each shape and its route, and which copies get enhanced. Then run it. See
-Credits in the cheat sheet: the request is the go-ahead. `<run>` is four random characters chosen
+Say the plan in one line: each shape and its route, and which copies get enhanced. Then run it. See "Credits and account status" in the cheat sheet. `<run>` is four random characters chosen
 once for this conversation.
 
 ```
@@ -139,6 +138,6 @@ finish F3 and F5), a hook at the start (`vertical-hook`), or a talking ad around
 - **A shape is not in the reframe row**: crop to it, or route 2.
 - **Moderation refused the video**: final. Tell the user; do not trim or recolour it to get past.
 - **Not enough credits**: stop and do not retry. Hand over the copies made, say once that the
-  balance does not cover the rest, give the account link from the refusal, and offer crops for the
+  balance does not cover the rest, and offer crops for the
   rest, which cost nothing.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

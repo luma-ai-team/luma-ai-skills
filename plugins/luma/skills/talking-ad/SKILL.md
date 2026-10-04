@@ -93,7 +93,7 @@ two seconds show the face. Show the user the script and go on when they have rec
 ## 5. Plan in one line, then run
 
 Say the plan in one line: one lip-sync per voice part, how many product shots, and that the edit
-puts it together. Then run it. See Credits in the cheat sheet: the request is the go-ahead. `<run>`
+puts it together. Then run it. See "Credits and account status" in the cheat sheet. `<run>`
 is four random characters chosen once for this conversation.
 
 ```
@@ -156,5 +156,5 @@ on screen. Say the links expire in an hour and `list_generations` finds them lat
 - **The face changed or the lips drift**: retake with a clearer, more frontal photo and a new key,
   once; if it fails again, say so and offer the generated-presenter route.
 - **Not enough credits**: stop and do not retry. Hand over what is made, say once that the balance
-  does not cover the rest, give the account link from the refusal, and offer fewer product shots.
+  does not cover the rest, and offer fewer product shots.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

@@ -102,8 +102,7 @@ or Reveal.
   two shapes and three treatments that is two stills and six clips. A Reveal adds one edit and one
   `frames` clip per shape; an effect adds one `apply_template` per shape. On the reframe route it
   is one still, the treatments, and one reframe per treatment per extra shape.
-- Then run it: the clean stills, your check of them, then the clips, without stopping between. See
-  Credits in the cheat sheet: the request is the go-ahead.
+- Then run it: the clean stills, your check of them, then the clips, without stopping between. See "Credits and account status" in the cheat sheet.
 
 ## 6. Make the clean stills
 
@@ -214,6 +213,6 @@ ad test needs, so keep everything else the same.
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key, and
   start fewer clips at once.
 - **Not enough credits**: stop and do not retry. Hand over what is made (ids and links), say once
-  that the balance does not cover the rest, show the account link from the refusal, and list what
+  that the balance does not cover the rest, and list what
   is left to make. Offer fewer treatments or one shape.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

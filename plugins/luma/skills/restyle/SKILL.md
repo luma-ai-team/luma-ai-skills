@@ -108,7 +108,7 @@ Say that a still shows the look, not the motion, and that the video result can d
 ## 5. Plan in one line
 
 `get_account` (consent). Say the plan in one line: the input, each look by name, and for a video
-the tier. Then run it. See Credits in the cheat sheet: the request is the go-ahead.
+the tier. Then run it. See "Credits and account status" in the cheat sheet.
 
 `apply_template` refuses a video whose length Luma does not know, and a clip outside the length or
 size the catalog accepts for a restyle, before anything is charged; say which limit it named and
@@ -184,6 +184,5 @@ ffmpeg -loglevel error -y -i original.mp4 -i style-a.mp4 -i style-b.mp4 -filter_
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key, and
   start fewer variants at once.
 - **Not enough credits**: stop and do not retry. Hand over the variants made so far (ids and
-  links), say once that the balance does not cover the rest, show the account link from the
-  refusal, say which looks are left to make, and offer fewer variants (or the `"fast"` tier).
+  links), say once that the balance does not cover the rest, say which looks are left to make, and offer fewer variants (or the `"fast"` tier).
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).
