@@ -159,7 +159,7 @@ there is no shell. Name the choice in the plan line.
 ## 6. Plan in one line, then run
 
 1. Say the plan in one line: the route, how many stills, how many clips, sound or silent, and the
-   loop attempt if any. Then run it. See Credits in the cheat sheet: the request is the go-ahead.
+   loop attempt if any. Then run it. See "Credits and account status" in the cheat sheet.
 2. **Stills first** (routes A, C, D), with the portrait `aspect_ratio`: a text call, or an edit
    with the uploaded photo (or the first still, once made) as `image`. On route A a variant with a
    different first second is its own still: two clips from one still differ only after frame one,
@@ -227,6 +227,6 @@ generate_video {"mode": "frames", "start_image": {"generation_id": "<still v1>"}
   it once more as a new job with a new key, and tell the user only if that one fails too.
 - **"Too many requests"**: wait the seconds it names, retry the same call with the same key.
 - **Not enough credits**: stop and do not retry. Hand over what is made so far (ids and links),
-  say once that the balance does not cover the rest, show the account link from the refusal, say
+  say once that the balance does not cover the rest, say
   which stills and clips are left to make, and offer fewer variants.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

@@ -21,10 +21,11 @@ Workflow text is copied by `scripts/sync-from-luma.mjs` and remains canonical in
 
 ## Current review state
 
-The manifest contains five positive and three negative **planned** review cases.
-They have not been executed with a reviewer account. No review video, reviewer credentials,
-verified publisher, domain verification or approved public listing is supplied by this repository.
-Package validation does not establish any of those outcomes.
+The manifest contains five positive and three negative review cases and a URL for the recorded
+MCP walkthrough. Reviewer credentials, publisher verification and domain verification are managed
+separately in the private submission portal. This repository does not establish an approved public
+listing. Package validation proves package structure; it does not prove test execution or review
+approval.
 
 Before submitting for review:
 

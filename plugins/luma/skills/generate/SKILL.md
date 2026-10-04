@@ -106,8 +106,7 @@ Two rules of thumb:
    clip whether it has sound. A clip from text, frames or extend made without `audio: true` is
    silent, as image clips always are. Take sound from the brief. When the brief does not mention
    it, make the clip silent and add in one line that a version with sound can be made.
-2. Run it straight after the plan line. See Credits in the cheat sheet: the request is the
-   go-ahead. For a still you will animate, make the still, check it, then animate it with its
+2. Run it straight after the plan line. See "Credits and account status" in the cheat sheet. For a still you will animate, make the still, check it, then animate it with its
    `generation_id` (or with the user's photo).
 
 ## Run
@@ -163,7 +162,7 @@ The cheat sheet's refusal table covers every message. The ones that come up most
 - **Moderation refusal**: it is final. Tell the user which input was refused, and do not reword the
   prompt to slip past it. They may choose a different idea.
 - **Not enough credits**: stop and do not retry. Hand over what is made (ids and links), say once
-  that the balance does not cover the rest, show the account link from the refusal, say what is
+  that the balance does not cover the rest, say what is
   left to make, and offer a smaller version.
 - **A failed generation**: read `error.message`, `retryable` and `refunded` from `get_generation`.
   When `retryable` is true, run it once more as a new job with a new key, and tell the user only if

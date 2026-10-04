@@ -9,7 +9,7 @@ This is for Luma AI, at [luma.ai](https://luma.ai). Luma Labs and Dream Machine 
 products, and this plugin does not connect to them.
 
 The plugin does two things. It connects your client to the Luma MCP at `https://luma.ai/api/mcp`,
-and it adds one skill per workflow. Each skill fixes the order Claude works in: ask only what is
+and it adds one skill per workflow. Each skill fixes the order the assistant works in: ask only what is
 missing, say the plan in one line, make it, check it, and show you the result.
 
 ## ChatGPT
@@ -50,11 +50,11 @@ In Claude Code, run `/mcp`, pick `luma-ai` and choose Authenticate. Codex reques
 when you install the plugin. A browser opens so you can sign in to your own Luma account and
 approve the connection. ChatGPT custom connections use the steps in the connection guide above.
 
-Everything generated spends credits from that account, at the same prices as on luma.ai.
-Your request authorizes the requested generation. Ask what something costs or what you have left,
-and the assistant checks with Luma. If the balance runs short, it explains the problem. Your
-client's tool permission settings still apply. Prices, lengths, shapes and models come from Luma's
-catalog when the workflow runs.
+Generation uses your connected account's existing Luma credits. The assistant follows your
+client's tool permissions and safeguards and makes only the output you request. Ask what something
+costs or what you have left, and it checks with Luma. If the balance runs short, it reports the
+required amount or shortfall and can offer a smaller version. The plugin provides no purchase or
+billing actions. Prices, lengths, shapes and models come from Luma's catalog when the workflow runs.
 
 Use photos, footage, faces and voices you own or have the right to use. Luma's content policy
 applies, and the tools enforce it.

@@ -67,8 +67,7 @@ else, pick a default, state your picks in one line with the plan, and go ahead.
 
 From a photo, bring it in first (`upload_media` `from_url`, or `start` then PUT then `confirm` with
 a shell, or a Luma picture's `generation_id`). Say the plan in one line (the anchor, then the rows
-of step 4), then make the anchor and go straight on to the set. See Credits in the cheat sheet:
-the request is the go-ahead.
+of step 4), then make the anchor and go straight on to the set. See "Credits and account status" in the cheat sheet.
 
 - **Invented**: `generate_image` `mode: "text"`: look line, character line, then "Full body, front
   view, standing, neutral expression, plain light grey background, even soft light." A plain
@@ -171,8 +170,7 @@ In a later conversation, `get_generation` with each id on the sheet gives a fres
 - **A shape was refused by the provider**: the credits came back; choose a value the
   `list_models` rows list, with a new key.
 - **Credits run out midway** (`insufficient_credits`): stop and do not retry. Hand over the sheet
-  so far (ids and links), say once that the balance does not cover the rest, give the account link
-  from the refusal, and list the rows still to make. Offer a smaller set.
+  so far (ids and links), say once that the balance does not cover the rest, and list the rows still to make. Offer a smaller set.
 - **A picture failed**: read `error.message`, `retryable` and `refunded`. When `retryable` is true,
   run it once more as a new job with a new key, and tell the user only if that one fails too.
 - Everything else: the refusal table in [the cheat sheet](../_shared/luma-tools.md).

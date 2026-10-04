@@ -116,7 +116,7 @@ brief asks for accents or an illustrated look, and name the look in the plan lin
    reshape the photos.
 2. Say the plan in one line: the look, how many clips, how many effects, how many stills, and the
    reel's length.
-3. Then make the clips. See Credits in the cheat sheet: the request is the go-ahead.
+3. Then make the clips. See "Credits and account status" in the cheat sheet.
 
 ## 7. Make the clips
 
